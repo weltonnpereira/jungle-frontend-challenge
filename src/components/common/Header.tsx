@@ -5,10 +5,11 @@ import {
   LogIn,
   SlidersHorizontal,
   X,
+  UserCheck,
+  LogOut,
 } from 'lucide-react'
 import { Button } from '@/src/components/ui/button'
 import { Input } from '@/src/components/ui/input'
-import { Badge } from '@/src/components/ui/badge'
 import { cn } from '@/src/lib/utils'
 
 export interface HeaderProps {
@@ -20,6 +21,8 @@ export interface HeaderProps {
   onOpenCart?: () => void
   onOpenFiltersSheet?: () => void
   onLoginClick?: () => void
+  currentUser?: { name: string; email: string } | null
+  onLogout?: () => void
   activeFiltersCount?: number
 }
 
@@ -39,6 +42,8 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenCart,
   onOpenFiltersSheet,
   onLoginClick,
+  currentUser = null,
+  onLogout,
   activeFiltersCount = 0,
 }) => {
   const [showDesktopSearch, setShowDesktopSearch] = React.useState(false)
@@ -134,15 +139,34 @@ export const Header: React.FC<HeaderProps> = ({
             )}
           </button>
 
-          {/* Entrar Button */}
-          <Button
-            onClick={onLoginClick}
-            size="default"
-            className="bg-[#E0A96D] text-[#0D0B0A] hover:bg-[#E9B880] font-bold text-xs gap-2 px-5 py-2 rounded-lg"
-          >
-            <LogIn className="h-4 w-4" />
-            <span>Entrar</span>
-          </Button>
+          {/* User Profile or Entrar Button */}
+          {currentUser ? (
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 rounded-lg border border-[#34271E] bg-[#17110E] px-3 py-1.5 text-xs text-[#F5F2EB]">
+                <UserCheck className="h-3.5 w-3.5 text-[#E0A96D]" />
+                <span className="font-mono font-bold truncate max-w-[100px]">
+                  {currentUser.name}
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={onLogout}
+                title="Sair"
+                className="p-2 text-[#8C7C6F] hover:text-red-400 transition-colors"
+              >
+                <LogOut className="h-4 w-4" />
+              </button>
+            </div>
+          ) : (
+            <Button
+              onClick={onLoginClick}
+              size="default"
+              className="bg-[#E0A96D] text-[#0D0B0A] hover:bg-[#E9B880] font-bold text-xs gap-2 px-5 py-2 rounded-lg font-mono"
+            >
+              <LogIn className="h-4 w-4" />
+              <span>Entrar</span>
+            </Button>
+          )}
         </div>
       </div>
 
@@ -157,7 +181,7 @@ export const Header: React.FC<HeaderProps> = ({
               value={searchValue}
               onChange={(e) => onSearchChange(e.target.value)}
               placeholder="Explorar coleções"
-              className="w-full h-11 pl-11 pr-4 rounded-xl bg-[#18120E] border border-[#2F231A] text-xs text-[#E0A96D] placeholder:text-[#A8988B] focus:outline-none focus:border-[#E0A96D] focus:ring-1 focus:ring-[#E0A96D]"
+              className="w-full h-11 pl-11 pr-4 rounded-xl bg-[#18120E] border border-[#2F231A] text-xs text-[#E0A96D] placeholder:text-[#A8988B] focus:outline-none focus:border-[#E0A96D] focus:ring-1 focus:ring-[#E0A96D] font-mono"
             />
             {searchValue && (
               <button
