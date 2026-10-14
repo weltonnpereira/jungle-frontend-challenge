@@ -1,0 +1,6 @@
+{
+  "name": "KURIO - Marketplace de Arte Digital & NFTs",
+  "description": "Descubra NFTs selecionados de criadores emergentes e consagrados. Colecione arte digital rara na plataforma Kurio.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
