@@ -7,6 +7,7 @@ import * as React from 'react'
 import { Header } from '@/src/components/common/Header'
 import { Footer } from '@/src/components/common/Footer'
 import { MobileNavigation } from '@/src/components/common/MobileNavigation'
+import { AuthModal, AuthMode } from '@/src/components/auth/AuthModal'
 import { Home } from '@/src/pages/Home'
 import { NFT } from '@/src/types/nft'
 import { MOCK_NFTS } from '@/src/mocks/nftData'
@@ -20,17 +21,27 @@ import {
 } from '@/src/components/ui/sheet'
 import { Button } from '@/src/components/ui/button'
 import { Badge } from '@/src/components/ui/badge'
-import { X, CheckCircle2, Wallet, ExternalLink } from 'lucide-react'
+import { X, CheckCircle2 } from 'lucide-react'
 
 export default function App() {
   const [activeNav, setActiveNav] = React.useState('inicio')
   const [searchQuery, setSearchQuery] = React.useState('')
   const [isMobileFilterOpen, setIsMobileFilterOpen] = React.useState(false)
   const [isCartOpen, setIsCartOpen] = React.useState(false)
-  const [isLoginOpen, setIsLoginOpen] = React.useState(false)
+
+  // Auth Modal state as specified
+  const [isAuthOpen, setIsAuthOpen] = React.useState(false)
+  const [authMode, setAuthMode] = React.useState<AuthMode>('login')
+  const [currentUser, setCurrentUser] = React.useState<{
+    name: string
+    email: string
+  } | null>(null)
+
   const [selectedNFT, setSelectedNFT] = React.useState<NFT | null>(null)
   const [notification, setNotification] = React.useState<string | null>(null)
-  const [cartItems, setCartItems] = React.useState<NFT[]>(() => MOCK_NFTS.slice(0, 6))
+  const [cartItems, setCartItems] = React.useState<NFT[]>(() =>
+    MOCK_NFTS.slice(0, 6)
+  )
 
   const showToast = (msg: string) => {
     setNotification(msg)
@@ -64,7 +75,7 @@ export default function App() {
     <div className="min-h-screen bg-[#0D0B0A] text-[#F3E8E2] flex flex-col font-sans">
       {/* Toast Alert */}
       {notification && (
-        <div className="fixed top-24 right-4 z-50 flex items-center gap-2 rounded-xl border border-[#E0A96D]/40 bg-[#1A1410] px-4 py-3 text-xs font-semibold text-[#F5F2EB] shadow-2xl backdrop-blur-md animate-in slide-in-from-top-4">
+        <div className="fixed top-24 right-4 z-50 flex items-center gap-2 rounded-xl border border-[#E0A96D]/40 bg-[#1A1410] px-4 py-3 text-xs font-semibold text-[#F5F2EB] shadow-2xl backdrop-blur-md animate-in slide-in-from-top-4 font-mono">
           <CheckCircle2 className="h-4 w-4 text-[#E0A96D]" />
           <span>{notification}</span>
         </div>
@@ -84,7 +95,15 @@ export default function App() {
         cartCount={cartItems.length}
         onOpenCart={() => setIsCartOpen(true)}
         onOpenFiltersSheet={() => setIsMobileFilterOpen(true)}
-        onLoginClick={() => setIsLoginOpen(true)}
+        currentUser={currentUser}
+        onLogout={() => {
+          setCurrentUser(null)
+          showToast('Sessão encerrada com sucesso.')
+        }}
+        onLoginClick={() => {
+          setAuthMode('login')
+          setIsAuthOpen(true)
+        }}
       />
 
       {/* Main Home Page */}
@@ -95,17 +114,23 @@ export default function App() {
           isMobileFilterOpen={isMobileFilterOpen}
           setIsMobileFilterOpen={setIsMobileFilterOpen}
           onSelectNFT={handleSelectNFT}
-          onToggleLike={(id) => showToast('Favoritos atualizados')}
+          onToggleLike={(_id) => showToast('Favoritos atualizados')}
           onExploreGenesis={() => {
             showToast('Explorando Lançamentos Gênesis')
-            document.getElementById('catalogo-nfts')?.scrollIntoView({ behavior: 'smooth' })
+            document
+              .getElementById('catalogo-nfts')
+              ?.scrollIntoView({ behavior: 'smooth' })
           }}
           onExploreCurated={() => {
             showToast('Explorando Coleções Curadas')
-            document.getElementById('catalogo-nfts')?.scrollIntoView({ behavior: 'smooth' })
+            document
+              .getElementById('catalogo-nfts')
+              ?.scrollIntoView({ behavior: 'smooth' })
           }}
           onReadArticle={(slug) => showToast(`Abrindo artigo: ${slug}`)}
-          onSubscribeNewsletter={(email) => showToast(`Inscrição confirmada para ${email}!`)}
+          onSubscribeNewsletter={(email) =>
+            showToast(`Inscrição confirmada para ${email}!`)
+          }
         />
       </main>
 
@@ -116,11 +141,44 @@ export default function App() {
       <MobileNavigation
         cartCount={cartItems.length}
         onTabChange={(tab) => {
-          if (tab === 'cart') setIsCartOpen(true)
-          else if (tab === 'favorites') showToast('Visualizando lista de favoritos')
-          else if (tab === 'profile') setIsLoginOpen(true)
+          if (tab === 'cart') {
+            setIsCartOpen(true)
+          } else if (tab === 'favorites') {
+            showToast('Visualizando lista de favoritos')
+          } else if (tab === 'profile') {
+            if (currentUser) {
+              showToast(`Perfil logado como: ${currentUser.name}`)
+            } else {
+              setAuthMode('login')
+              setIsAuthOpen(true)
+            }
+          }
         }}
         onScanClick={() => showToast('Abrindo leitor de QR e cunhagem rápida...')}
+      />
+
+      {/* Unified Auth Modal (Desktop Dialog & Mobile Sheet) */}
+      <AuthModal
+        isOpen={isAuthOpen}
+        onOpenChange={setIsAuthOpen}
+        authMode={authMode}
+        setAuthMode={setAuthMode}
+        onSuccess={(userData) => {
+          setCurrentUser(userData)
+          showToast(`Bem-vindo à Kurio, ${userData.name}!`)
+        }}
+        onForgotPassword={() => {
+          showToast('Instruções de redefinição enviadas para seu e-mail.')
+        }}
+        onSocialLogin={(provider) => {
+          const providerName = provider === 'google' ? 'Google' : 'Facebook'
+          setCurrentUser({
+            name: `${providerName} Collector`,
+            email: `collector@${provider}.com`,
+          })
+          setIsAuthOpen(false)
+          showToast(`Conectado com sucesso via ${providerName}!`)
+        }}
       />
 
       {/* Shopping Cart Sheet */}
@@ -226,14 +284,20 @@ export default function App() {
                   {selectedNFT.name}
                 </h3>
                 <p className="text-xs text-[#A8988B]">
-                  Coleção: <span className="text-[#E0A96D]">{selectedNFT.collection}</span>
+                  Coleção:{' '}
+                  <span className="text-[#E0A96D]">
+                    {selectedNFT.collection}
+                  </span>
                 </p>
                 <p className="text-xs text-[#A8988B]">
-                  Rede: <span className="text-[#F3E8E2]">{selectedNFT.network}</span>
+                  Rede:{' '}
+                  <span className="text-[#F3E8E2]">{selectedNFT.network}</span>
                 </p>
 
                 <div className="pt-2">
-                  <span className="text-xs text-[#8C7C6F] block">Preço Atual</span>
+                  <span className="text-xs text-[#8C7C6F] block">
+                    Preço Atual
+                  </span>
                   <span className="font-mono text-2xl font-black text-[#E0A96D]">
                     {selectedNFT.price.toFixed(2)} {selectedNFT.currency}
                   </span>
@@ -248,51 +312,6 @@ export default function App() {
                   </Button>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Login / Wallet Modal */}
-      {isLoginOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in">
-          <div className="relative w-full max-w-sm rounded-3xl border border-[#342921] bg-[#16120F] p-6 shadow-2xl text-center space-y-5">
-            <button
-              type="button"
-              onClick={() => setIsLoginOpen(false)}
-              className="absolute right-4 top-4 rounded-full p-2 text-[#8C7C6F] hover:bg-[#201814] hover:text-[#F3E8E2]"
-            >
-              <X className="h-5 w-5" />
-            </button>
-
-            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-[#E0A96D]/15 text-[#E0A96D]">
-              <Wallet className="h-6 w-6" />
-            </div>
-
-            <div>
-              <h3 className="text-lg font-bold text-[#F5F2EB]">
-                Conecte sua Carteira
-              </h3>
-              <p className="text-xs text-[#A8988B] mt-1">
-                Acesse sua coleção ou adquira artes digitais selecionadas.
-              </p>
-            </div>
-
-            <div className="space-y-2 pt-2">
-              {['MetaMask', 'WalletConnect', 'Coinbase Wallet'].map((w) => (
-                <button
-                  key={w}
-                  type="button"
-                  onClick={() => {
-                    showToast(`Conectado com sucesso via ${w}!`)
-                    setIsLoginOpen(false)
-                  }}
-                  className="flex w-full items-center justify-between rounded-xl border border-[#2D231B] bg-[#1A1410] px-4 py-3 text-xs font-semibold text-[#F3E8E2] hover:border-[#E0A96D] hover:bg-[#221812] transition-colors"
-                >
-                  <span>{w}</span>
-                  <ExternalLink className="h-3.5 w-3.5 text-[#8C7C6F]" />
-                </button>
-              ))}
             </div>
           </div>
         </div>
