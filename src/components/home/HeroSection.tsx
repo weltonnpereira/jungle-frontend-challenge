@@ -20,7 +20,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         {/* Left Column: Text & CTA */}
         <div className="lg:col-span-7 flex flex-col items-start space-y-6">
           <div className="inline-flex items-center gap-2">
-            <span className="text-xs uppercase tracking-[0.2em] font-semibold text-[#E0A96D]">
+            <span className="text-[15px] tracking-[0.2em] font-regular text-[#F5F1EB]">
               Bem-vindo à Kurio
             </span>
           </div>
@@ -30,7 +30,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             DA ARTE DIGITAL
           </h1>
 
-          <p className="max-w-xl text-base sm:text-lg text-[#A8988B] leading-relaxed">
+          <p className="max-w-xl text-base sm:text-lg text-[#CFB28C] leading-relaxed">
             Descubra NFTs selecionados de criadores emergentes e consagrados.
             Colecione arte digital rara, apoie artistas e tenha uma parte da
             cultura da internet.

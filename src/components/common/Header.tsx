@@ -52,7 +52,7 @@ export const Header: React.FC<HeaderProps> = ({
           <button
             type="button"
             onClick={() => onNavClick?.('inicio')}
-            className="text-xl font-black uppercase tracking-widest text-[#F5F2EB] hover:text-[#E0A96D] transition-colors"
+            className="text-sm font-bold  uppercase tracking-widest text-[#F5F2EB] hover:text-[#E0A96D] transition-colors"
           >
             KURIO
           </button>
@@ -71,7 +71,7 @@ export const Header: React.FC<HeaderProps> = ({
                   'relative py-2 text-sm font-medium tracking-wide transition-colors',
                   isActive
                     ? 'text-[#E0A96D] font-bold'
-                    : 'text-[#A8988B] hover:text-[#F3E8E2]'
+                    : 'text-[#F5F1EB] hover:text-[#E0A96D]'
                 )}
               >
                 {link.label}
