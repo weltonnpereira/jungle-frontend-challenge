@@ -24,7 +24,6 @@ export interface HomeProps {
   onExploreGenesis?: () => void;
   onExploreCurated?: () => void;
   onReadArticle?: (slug: string) => void;
-  onSubscribeNewsletter?: (email: string) => void;
   /**
    * Search query synced from the Header component
    */
@@ -47,7 +46,7 @@ export const Home: React.FC<HomeProps> = ({
   onExploreGenesis,
   onExploreCurated,
   onReadArticle,
-  onSubscribeNewsletter,
+
   searchQuery = "",
   isMobileFilterOpen: controlledMobileFilterOpen,
   setIsMobileFilterOpen: controlledSetMobileFilterOpen,
@@ -289,9 +288,6 @@ export const Home: React.FC<HomeProps> = ({
 
         {/* 4. Editorial: Diário da Cunhagem */}
         <MintingDiary onReadArticle={onReadArticle} />
-
-        {/* 5. Value propositions & Newsletter */}
-        <FeaturesNewsletter onSubscribe={onSubscribeNewsletter} />
       </div>
 
       {/* Mobile Filters Sheet (Radix / shadcn Sheet) */}

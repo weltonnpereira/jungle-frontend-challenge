@@ -3,109 +3,121 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import * as React from 'react'
-import { Header } from '@/src/components/common/Header'
-import { Footer } from '@/src/components/common/Footer'
-import { MobileNavigation } from '@/src/components/common/MobileNavigation'
-import { AuthModal, AuthMode } from '@/src/components/auth/AuthModal'
-import { CartView } from '@/src/components/cart/CartView'
-import { CheckoutView } from '@/src/components/checkout/CheckoutView'
-import { OrderConfirmationModal } from '@/src/components/checkout/OrderConfirmationModal'
-import { NFTDetailView } from '@/src/components/nft/NFTDetailView'
-import { Home } from '@/src/pages/Home'
-import { NFT } from '@/src/types/nft'
-import { CartItem, OrderConfirmationData, CollectorProfile } from '@/src/types/cart'
-import { MOCK_NFTS } from '@/src/mocks/nftData'
-import { CheckCircle2 } from 'lucide-react'
+import * as React from "react";
+import { Header } from "@/src/components/common/Header";
+import { Footer } from "@/src/components/common/Footer";
+import { MobileNavigation } from "@/src/components/common/MobileNavigation";
+import { AuthModal, AuthMode } from "@/src/components/auth/AuthModal";
+import { CartView } from "@/src/components/cart/CartView";
+import { CheckoutView } from "@/src/components/checkout/CheckoutView";
+import { OrderConfirmationModal } from "@/src/components/checkout/OrderConfirmationModal";
+import { NFTDetailView } from "@/src/components/nft/NFTDetailView";
+import { Home } from "@/src/pages/Home";
+import { NFT } from "@/src/types/nft";
+import {
+  CartItem,
+  OrderConfirmationData,
+  CollectorProfile,
+} from "@/src/types/cart";
+import { MOCK_NFTS } from "@/src/mocks/nftData";
+import { CheckCircle2 } from "lucide-react";
+import { useMediaQuery } from "./hooks/use-media-query";
 
-export type CurrentView = 'home' | 'cart' | 'checkout' | 'nft-details'
+export type CurrentView = "home" | "cart" | "checkout" | "nft-details";
 
 export default function App() {
-  const [currentView, setCurrentView] = React.useState<CurrentView>('home')
-  const [activeNav, setActiveNav] = React.useState('inicio')
-  const [searchQuery, setSearchQuery] = React.useState('')
-  const [isMobileFilterOpen, setIsMobileFilterOpen] = React.useState(false)
+  function useIsMounted() {
+    const [mounted, setMounted] = React.useState(false);
+    React.useEffect(() => setMounted(true), []);
+    return mounted;
+  }
+
+  const [currentView, setCurrentView] = React.useState<CurrentView>("home");
+  const [activeNav, setActiveNav] = React.useState("inicio");
+  const [searchQuery, setSearchQuery] = React.useState("");
+  const [isMobileFilterOpen, setIsMobileFilterOpen] = React.useState(false);
 
   // Auth Modal state
-  const [isAuthOpen, setIsAuthOpen] = React.useState(false)
-  const [authMode, setAuthMode] = React.useState<AuthMode>('login')
+  const [isAuthOpen, setIsAuthOpen] = React.useState(false);
+  const [authMode, setAuthMode] = React.useState<AuthMode>("login");
   const [currentUser, setCurrentUser] = React.useState<{
-    name: string
-    email: string
-  } | null>(null)
+    name: string;
+    email: string;
+  } | null>(null);
 
   // NFT Details State
-  const [viewingNFT, setViewingNFT] = React.useState<NFT | null>(null)
+  const [viewingNFT, setViewingNFT] = React.useState<NFT | null>(null);
 
   // Order Confirmation State
-  const [isOrderConfirmedOpen, setIsOrderConfirmedOpen] = React.useState(false)
+  const [isOrderConfirmedOpen, setIsOrderConfirmedOpen] = React.useState(false);
   const [orderConfirmationData, setOrderConfirmationData] =
-    React.useState<OrderConfirmationData | null>(null)
+    React.useState<OrderConfirmationData | null>(null);
 
   // Notification Toast State
-  const [notification, setNotification] = React.useState<string | null>(null)
+  const [notification, setNotification] = React.useState<string | null>(null);
 
   // Cart State (Initialized with the exact items shown in Carrinho de NFTs desktop 2.jpg)
   const [cartItems, setCartItems] = React.useState<CartItem[]>(() => [
     {
-      id: 'cart-1',
+      id: "cart-1",
       nft: MOCK_NFTS[0], // Emerald Ape #042
       quantity: 2,
-      edition: '1/50',
+      edition: "1/50",
       unitPrice: 1.19,
     },
     {
-      id: 'cart-2',
+      id: "cart-2",
       nft: MOCK_NFTS[4], // Violet Nomad #314
       quantity: 6,
-      edition: '1/1',
+      edition: "1/1",
       unitPrice: 1.39,
     },
     {
-      id: 'cart-3',
+      id: "cart-3",
       nft: MOCK_NFTS[5], // Ivory Baron #088
       quantity: 9,
-      edition: '1/10',
+      edition: "1/10",
       unitPrice: 1.79,
     },
-  ])
+  ]);
 
   const showToast = (msg: string) => {
-    setNotification(msg)
+    setNotification(msg);
     setTimeout(() => {
-      setNotification((prev) => (prev === msg ? null : prev))
-    }, 3000)
-  }
+      setNotification((prev) => (prev === msg ? null : prev));
+    }, 3000);
+  };
 
   // Cart operations
   const handleUpdateQuantity = (id: string, delta: number) => {
-    setCartItems((prev) =>
-      prev
-        .map((item) => {
-          if (item.id === id) {
-            const nextQty = item.quantity + delta
-            return nextQty > 0 ? { ...item, quantity: nextQty } : null
-          }
-          return item
-        })
-        .filter(Boolean) as CartItem[]
-    )
-  }
+    setCartItems(
+      (prev) =>
+        prev
+          .map((item) => {
+            if (item.id === id) {
+              const nextQty = item.quantity + delta;
+              return nextQty > 0 ? { ...item, quantity: nextQty } : null;
+            }
+            return item;
+          })
+          .filter(Boolean) as CartItem[],
+    );
+  };
 
   const handleRemoveItem = (id: string) => {
-    setCartItems((prev) => prev.filter((item) => item.id !== id))
-    showToast('Item removido do carrinho.')
-  }
+    setCartItems((prev) => prev.filter((item) => item.id !== id));
+    showToast("Item removido do carrinho.");
+  };
 
-  const handleAddToCart = (nft: NFT, quantity = 1, edition = '1/50') => {
+  const handleAddToCart = (nft: NFT, quantity = 1, edition = "1/50") => {
     setCartItems((prev) => {
-      const existing = prev.find((item) => item.nft.id === nft.id)
+      const existing = prev.find((item) => item.nft.id === nft.id);
       if (existing) {
         return prev.map((item) =>
           item.nft.id === nft.id
             ? { ...item, quantity: item.quantity + quantity }
-            : item
-        )
+            : item,
+        );
       }
       return [
         ...prev,
@@ -116,61 +128,66 @@ export default function App() {
           edition,
           unitPrice: nft.price,
         },
-      ]
-    })
-    showToast(`"${nft.name}" adicionado ao carrinho!`)
-  }
+      ];
+    });
+    showToast(`"${nft.name}" adicionado ao carrinho!`);
+  };
 
-  const handleBuyNow = (nft: NFT, quantity = 1, edition = '1/50') => {
-    handleAddToCart(nft, quantity, edition)
-    setCurrentView('checkout')
-    window.scrollTo({ top: 0, behavior: 'smooth' })
-  }
+  const handleBuyNow = (nft: NFT, quantity = 1, edition = "1/50") => {
+    handleAddToCart(nft, quantity, edition);
+    setCurrentView("checkout");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   const handleSelectNFT = (nft: NFT) => {
-    setViewingNFT(nft)
-    setCurrentView('nft-details')
-    window.scrollTo({ top: 0, behavior: 'smooth' })
-  }
+    setViewingNFT(nft);
+    setCurrentView("nft-details");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   const handleConfirmPurchase = (data: {
-    profile: CollectorProfile
-    selectedWallet: string
-    total: number
-    items: CartItem[]
+    profile: CollectorProfile;
+    selectedWallet: string;
+    total: number;
+    items: CartItem[];
   }) => {
     const confirmation: OrderConfirmationData = {
-      transactionId: '0xA91F9a38C201C46E82C09b',
-      date: new Date().toLocaleDateString('pt-BR', {
-        day: '2-digit',
-        month: 'short',
-        year: 'numeric',
+      transactionId: "0xA91F9a38C201C46E82C09b",
+      date: new Date().toLocaleDateString("pt-BR", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
       }),
       total: data.total,
       subtotal: data.items.reduce(
         (acc, item) => acc + item.unitPrice * item.quantity,
-        0
+        0,
       ),
       discount: 0,
       networkFee: 0.016,
       wallet: data.selectedWallet,
       items: [...data.items],
       network: data.profile.network,
-    }
+    };
 
-    setOrderConfirmationData(confirmation)
-    setIsOrderConfirmedOpen(true)
-    setCartItems([]) // Empty cart after successful purchase
-    showToast('Transação confirmada na blockchain!')
-  }
+    setOrderConfirmationData(confirmation);
+    setIsOrderConfirmedOpen(true);
+    setCartItems([]); // Empty cart after successful purchase
+    showToast("Transação confirmada na blockchain!");
+  };
 
   const totalCartCount = cartItems.reduce(
     (sum, item) => sum + item.quantity,
-    0
-  )
+    0,
+  );
+
+  const isDesktop = useMediaQuery("(min-width: 640px)");
+  const isMounted = useIsMounted();
+
+  if (!isMounted) return null;
 
   return (
-    <div className="min-h-screen bg-[#0D0B0A] text-[#F3E8E2] flex flex-col font-sans">
+    <div className="min-h-screen bg-[#140D0A] text-[#F3E8E2] flex flex-col font-sans">
       {/* Toast Alert */}
       {notification && (
         <div className="fixed top-24 right-4 z-50 flex items-center gap-2 rounded-xl border border-[#E0A96D]/40 bg-[#1A1410] px-4 py-3 text-xs font-semibold text-[#F5F2EB] shadow-2xl backdrop-blur-md animate-in slide-in-from-top-4 font-mono">
@@ -181,109 +198,106 @@ export default function App() {
 
       {/* Main Responsive Header */}
       <Header
-        activeNav={currentView === 'home' ? activeNav : 'mercado'}
+        activeNav={currentView === "home" ? activeNav : "mercado"}
         onNavClick={(nav) => {
-          setActiveNav(nav)
-          if (nav === 'inicio') {
-            setCurrentView('home')
+          setActiveNav(nav);
+          if (nav === "inicio") {
+            setCurrentView("home");
           } else {
-            setCurrentView('home')
-            showToast(`Navegando para: ${nav.toUpperCase()}`)
+            setCurrentView("home");
+            showToast(`Navegando para: ${nav.toUpperCase()}`);
           }
         }}
         searchValue={searchQuery}
         onSearchChange={setSearchQuery}
         cartCount={totalCartCount}
         onOpenCart={() => {
-          setCurrentView('cart')
-          window.scrollTo({ top: 0, behavior: 'smooth' })
+          setCurrentView("cart");
+          window.scrollTo({ top: 0, behavior: "smooth" });
         }}
         onOpenFiltersSheet={() => {
-          if (currentView !== 'home') {
-            setCurrentView('home')
+          if (currentView !== "home") {
+            setCurrentView("home");
           }
-          setIsMobileFilterOpen(true)
+          setIsMobileFilterOpen(true);
         }}
         currentUser={currentUser}
         onLogout={() => {
-          setCurrentUser(null)
-          showToast('Sessão encerrada com sucesso.')
+          setCurrentUser(null);
+          showToast("Sessão encerrada com sucesso.");
         }}
         onLoginClick={() => {
-          setAuthMode('login')
-          setIsAuthOpen(true)
+          setAuthMode("login");
+          setIsAuthOpen(true);
         }}
       />
 
       {/* Main Content Router */}
       <main className="flex-1">
-        {currentView === 'home' && (
+        {currentView === "home" && (
           <Home
             searchQuery={searchQuery}
             heroImage="/assets/hero-nft.png"
             isMobileFilterOpen={isMobileFilterOpen}
             setIsMobileFilterOpen={setIsMobileFilterOpen}
             onSelectNFT={handleSelectNFT}
-            onToggleLike={(_id) => showToast('Favoritos atualizados')}
+            onToggleLike={(_id) => showToast("Favoritos atualizados")}
             onExploreGenesis={() => {
-              showToast('Explorando Lançamentos Gênesis')
+              showToast("Explorando Lançamentos Gênesis");
               document
-                .getElementById('catalogo-nfts')
-                ?.scrollIntoView({ behavior: 'smooth' })
+                .getElementById("catalogo-nfts")
+                ?.scrollIntoView({ behavior: "smooth" });
             }}
             onExploreCurated={() => {
-              showToast('Explorando Coleções Curadas')
+              showToast("Explorando Coleções Curadas");
               document
-                .getElementById('catalogo-nfts')
-                ?.scrollIntoView({ behavior: 'smooth' })
+                .getElementById("catalogo-nfts")
+                ?.scrollIntoView({ behavior: "smooth" });
             }}
             onReadArticle={(slug) => showToast(`Abrindo artigo: ${slug}`)}
-            onSubscribeNewsletter={(email) =>
-              showToast(`Inscrição confirmada para ${email}!`)
-            }
           />
         )}
 
-        {currentView === 'cart' && (
+        {currentView === "cart" && (
           <CartView
             items={cartItems}
             onUpdateQuantity={handleUpdateQuantity}
             onRemoveItem={handleRemoveItem}
             onCheckout={() => {
-              setCurrentView('checkout')
-              window.scrollTo({ top: 0, behavior: 'smooth' })
+              setCurrentView("checkout");
+              window.scrollTo({ top: 0, behavior: "smooth" });
             }}
             onContinueShopping={() => {
-              setCurrentView('home')
-              window.scrollTo({ top: 0, behavior: 'smooth' })
+              setCurrentView("home");
+              window.scrollTo({ top: 0, behavior: "smooth" });
             }}
             onSelectRecommendedNFT={handleSelectNFT}
           />
         )}
 
-        {currentView === 'checkout' && (
+        {currentView === "checkout" && (
           <CheckoutView
             items={cartItems}
             onBackToCart={() => {
-              setCurrentView('cart')
-              window.scrollTo({ top: 0, behavior: 'smooth' })
+              setCurrentView("cart");
+              window.scrollTo({ top: 0, behavior: "smooth" });
             }}
             onConfirmPurchase={handleConfirmPurchase}
           />
         )}
 
-        {currentView === 'nft-details' && viewingNFT && (
+        {currentView === "nft-details" && viewingNFT && (
           <NFTDetailView
             nft={viewingNFT}
             onBack={() => {
-              setCurrentView('home')
-              window.scrollTo({ top: 0, behavior: 'smooth' })
+              setCurrentView("home");
+              window.scrollTo({ top: 0, behavior: "smooth" });
             }}
             onAddToCart={(nft, quantity, edition) => {
-              handleAddToCart(nft, quantity, edition)
+              handleAddToCart(nft, quantity, edition);
             }}
             onBuyNow={(nft, quantity, edition) => {
-              handleBuyNow(nft, quantity, edition)
+              handleBuyNow(nft, quantity, edition);
             }}
             onSelectNFT={handleSelectNFT}
           />
@@ -291,31 +305,42 @@ export default function App() {
       </main>
 
       {/* Footer */}
-      <Footer />
+      {(isDesktop ||
+        !["checkout", "nft-details", "cart"].includes(currentView)) && (
+        <Footer
+          onSubscribeNewsletter={(email) =>
+            showToast(`Inscrição confirmada para ${email}!`)
+          }
+        />
+      )}
 
       {/* Mobile Sticky Navigation Dock */}
       <MobileNavigation
         cartCount={totalCartCount}
-        activeTab={currentView === 'home' ? 'home' : currentView === 'cart' ? 'cart' : ''}
+        activeTab={
+          currentView === "home" ? "home" : currentView === "cart" ? "cart" : ""
+        }
         onTabChange={(tab) => {
-          if (tab === 'home') {
-            setCurrentView('home')
-            window.scrollTo({ top: 0, behavior: 'smooth' })
-          } else if (tab === 'cart') {
-            setCurrentView('cart')
-            window.scrollTo({ top: 0, behavior: 'smooth' })
-          } else if (tab === 'favorites') {
-            showToast('Visualizando lista de favoritos')
-          } else if (tab === 'profile') {
+          if (tab === "home") {
+            setCurrentView("home");
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          } else if (tab === "cart") {
+            setCurrentView("cart");
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          } else if (tab === "favorites") {
+            showToast("Visualizando lista de favoritos");
+          } else if (tab === "profile") {
             if (currentUser) {
-              showToast(`Perfil conectado: ${currentUser.name}`)
+              showToast(`Perfil conectado: ${currentUser.name}`);
             } else {
-              setAuthMode('login')
-              setIsAuthOpen(true)
+              setAuthMode("login");
+              setIsAuthOpen(true);
             }
           }
         }}
-        onScanClick={() => showToast('Abrindo leitor de QR e cunhagem rápida...')}
+        onScanClick={() =>
+          showToast("Abrindo leitor de QR e cunhagem rápida...")
+        }
       />
 
       {/* Unified Auth Modal */}
@@ -325,20 +350,20 @@ export default function App() {
         authMode={authMode}
         setAuthMode={setAuthMode}
         onSuccess={(userData) => {
-          setCurrentUser(userData)
-          showToast(`Bem-vindo à Kurio, ${userData.name}!`)
+          setCurrentUser(userData);
+          showToast(`Bem-vindo à Kurio, ${userData.name}!`);
         }}
         onForgotPassword={() => {
-          showToast('Instruções enviadas para seu e-mail.')
+          showToast("Instruções enviadas para seu e-mail.");
         }}
         onSocialLogin={(provider) => {
-          const providerName = provider === 'google' ? 'Google' : 'Facebook'
+          const providerName = provider === "google" ? "Google" : "Facebook";
           setCurrentUser({
             name: `${providerName} Collector`,
             email: `collector@${provider}.com`,
-          })
-          setIsAuthOpen(false)
-          showToast(`Conectado com sucesso via ${providerName}!`)
+          });
+          setIsAuthOpen(false);
+          showToast(`Conectado com sucesso via ${providerName}!`);
         }}
       />
 
@@ -346,14 +371,14 @@ export default function App() {
       <OrderConfirmationModal
         isOpen={isOrderConfirmedOpen}
         onClose={() => {
-          setIsOrderConfirmedOpen(false)
-          setCurrentView('home')
+          setIsOrderConfirmedOpen(false);
+          setCurrentView("home");
         }}
         orderData={orderConfirmationData}
         onViewEtherscan={(txId) => {
-          showToast(`Consultando transação ${txId} no explorador de blocos...`)
+          showToast(`Consultando transação ${txId} no explorador de blocos...`);
         }}
       />
     </div>
-  )
+  );
 }

@@ -27,7 +27,7 @@ export const MintingDiary: React.FC<MintingDiaryProps> = ({ onReadArticle }) => 
           <Card
             key={article.id}
             onClick={() => onReadArticle?.(article.slug)}
-            className="group overflow-hidden rounded-2xl border-[#2D231B] bg-[#16120F] transition-all duration-300 hover:border-[#E0A96D]/40 cursor-pointer flex flex-col h-full"
+            className="group overflow-hidden rounded-2xl border-[#2D231B] bg-[#241612] transition-all duration-300 hover:border-[#E0A96D]/40 cursor-pointer flex flex-col h-full"
           >
             {/* Article Image */}
             <div className="aspect-[4/3] w-full overflow-hidden bg-[#201814]">

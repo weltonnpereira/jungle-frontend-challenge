@@ -83,10 +83,10 @@ export const NFTGrid: React.FC<NFTGridProps> = ({
                 type="button"
                 onClick={() => onTabChange(tab.id)}
                 className={cn(
-                  'relative pb-3 text-sm font-bold tracking-wide whitespace-nowrap transition-colors',
+                  'relative pb-3 text-sm font-regular tracking-wide whitespace-nowrap transition-colors',
                   isActive
-                    ? 'text-[#E0A96D]'
-                    : 'text-[#A8988B] hover:text-[#F3E8E2]'
+                    ? 'text-[#E89B55]'
+                    : 'text-[#F3E8E2] hover:text-[#F5F1EB]'
                 )}
               >
                 {tab.label}

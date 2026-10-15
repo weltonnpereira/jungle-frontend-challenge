@@ -49,7 +49,7 @@ export const FiltersSidebar: React.FC<FiltersSidebarProps> = ({
     <aside className={cn('w-full space-y-8 select-none', className)}>
       {/* 1. Coleções */}
       <div>
-        <h3 className="mb-4 text-base font-bold tracking-wide text-[#F5F2EB]">
+        <h3 className="mb-4 text-base font-regular tracking-wide text-[#F5F2EB]">
           Coleções
         </h3>
         <ul className="space-y-2.5 text-sm">
@@ -65,8 +65,8 @@ export const FiltersSidebar: React.FC<FiltersSidebarProps> = ({
                   className={cn(
                     'group flex w-full items-center justify-between py-1 transition-colors text-left',
                     isSelected
-                      ? 'text-[#E0A96D] font-semibold'
-                      : 'text-[#A8988B] hover:text-[#F3E8E2]'
+                      ? 'text-[#E89B55] font-regular'
+                      : 'text-[#CFB28C] hover:text-[#F3E8E2]'
                   )}
                 >
                   <span className="truncate group-hover:translate-x-0.5 transition-transform">
@@ -169,10 +169,10 @@ export const FiltersSidebar: React.FC<FiltersSidebarProps> = ({
       {showFeaturedCard && (
         <div className="pt-2">
           <div className="text-center mb-3">
-            <span className="block text-xs font-bold uppercase tracking-widest text-[#E0A96D]">
+            <span className="block text-[20px] font-semibold uppercase tracking-widest text-[#E89B55]">
               NFT EM DESTAQUE
             </span>
-            <span className="block text-sm font-extrabold uppercase tracking-wider text-[#F5F2EB]">
+            <span className="block text-md font-semibold uppercase tracking-wider text-[#F5F2EB]">
               OFERTA LIMITADA
             </span>
           </div>

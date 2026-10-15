@@ -296,7 +296,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
   const isDesktop = useMediaQuery("(min-width: 640px)");
   const isMounted = useIsMounted();
-  console.log(isDesktop);
 
   if (!isMounted || !isOpen) return null;
 

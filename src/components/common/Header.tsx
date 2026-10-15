@@ -49,7 +49,7 @@ export const Header: React.FC<HeaderProps> = ({
   const [showDesktopSearch, setShowDesktopSearch] = React.useState(false);
 
   return (
-    <header className="sticky top-0 z-40 w-full bg-[#0D0B0A]/95 backdrop-blur-md border-b border-[#241A14]">
+    <header className="sticky top-0 z-40 w-full bg-[#0D0B0A]/95 backdrop-blur-md border-b border-[#D28A4C]/40">
       {/* ================= DESKTOP HEADER (sm and up) ================= */}
       <div className="hidden sm:flex max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 items-center justify-between">
         {/* Brand Logo */}
@@ -74,15 +74,15 @@ export const Header: React.FC<HeaderProps> = ({
                 type="button"
                 onClick={() => onNavClick?.(link.id)}
                 className={cn(
-                  "relative py-2 cursor-pointer text-sm font-medium tracking-wide transition-colors",
+                  "relative py-2 cursor-pointer text-md font-regular tracking-wide transition-colors",
                   isActive
-                    ? "text-[#E0A96D] font-bold"
+                    ? "text-[#E89B55] font-bold"
                     : "text-[#F5F1EB] hover:text-[#E0A96D]",
                 )}
               >
                 {link.label}
                 {isActive && (
-                  <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#E0A96D] rounded-full" />
+                  <span className="absolute bottom-[-21px] left-0 right-0 h-0.5 bg-[#E89B55] " />
                 )}
               </a>
             );
@@ -134,7 +134,7 @@ export const Header: React.FC<HeaderProps> = ({
           >
             <ShoppingBag className="cursor-pointer h-5 w-5" />
             {cartCount > 0 && (
-              <span className="absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#E0A96D] px-1 text-[10px] font-bold text-[#0D0B0A] font-mono">
+              <span className="absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#D28A4C] px-1 text-[10px] font-bold text-[#0D0B0A] font-mono">
                 {cartCount}
               </span>
             )}
@@ -162,7 +162,7 @@ export const Header: React.FC<HeaderProps> = ({
             <Button
               onClick={onLoginClick}
               size="default"
-              className="bg-[#E0A96D] cursor-pointer text-[#0D0B0A] hover:bg-[#E9B880] font-bold text-xs gap-2 px-5 py-2 rounded-lg font-mono"
+              className="bg-[#D28A4C] cursor-pointer text-[#0D0B0A] hover:bg-[#E9B880] font-bold text-md gap-2 px-3 py-2 rounded-lg font-mono"
             >
               <LogIn className="h-4 w-4" />
               <span>Entrar</span>
