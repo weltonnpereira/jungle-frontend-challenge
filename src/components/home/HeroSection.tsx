@@ -25,7 +25,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             </span>
           </div>
 
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold uppercase tracking-tight text-[#F5F2EB] leading-[1.08]">
+          <h1 className="text-a4xl sm:text-5xl lg:text-6xl font-extrabold uppercase tracking-tight text-[#F5F2EB] leading-[1.08]">
             SEJA DONO DO FUTURO <br />
             DA ARTE DIGITAL
           </h1>

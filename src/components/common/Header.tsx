@@ -1,4 +1,4 @@
-import * as React from 'react'
+import * as React from "react";
 import {
   Search,
   ShoppingBag,
@@ -7,34 +7,34 @@ import {
   X,
   UserCheck,
   LogOut,
-} from 'lucide-react'
-import { Button } from '@/src/components/ui/button'
-import { Input } from '@/src/components/ui/input'
-import { cn } from '@/src/lib/utils'
+} from "lucide-react";
+import { Button } from "@/src/components/ui/button";
+import { Input } from "@/src/components/ui/input";
+import { cn } from "@/src/lib/utils";
 
 export interface HeaderProps {
-  activeNav?: string
-  onNavClick?: (nav: string) => void
-  searchValue: string
-  onSearchChange: (value: string) => void
-  cartCount?: number
-  onOpenCart?: () => void
-  onOpenFiltersSheet?: () => void
-  onLoginClick?: () => void
-  currentUser?: { name: string; email: string } | null
-  onLogout?: () => void
-  activeFiltersCount?: number
+  activeNav?: string;
+  onNavClick?: (nav: string) => void;
+  searchValue: string;
+  onSearchChange: (value: string) => void;
+  cartCount?: number;
+  onOpenCart?: () => void;
+  onOpenFiltersSheet?: () => void;
+  onLoginClick?: () => void;
+  currentUser?: { name: string; email: string } | null;
+  onLogout?: () => void;
+  activeFiltersCount?: number;
 }
 
 const NAV_LINKS = [
-  { id: 'inicio', label: 'Início' },
-  { id: 'mercado', label: 'Mercado' },
-  { id: 'criadores', label: 'Criadores' },
-  { id: 'aprenda', label: 'Aprenda' },
-]
+  { id: "inicio", label: "Início" },
+  { id: "mercado", label: "Mercado" },
+  { id: "criadores", label: "Criadores" },
+  { id: "aprenda", label: "Aprenda" },
+];
 
 export const Header: React.FC<HeaderProps> = ({
-  activeNav = 'inicio',
+  activeNav = "inicio",
   onNavClick,
   searchValue,
   onSearchChange,
@@ -46,7 +46,7 @@ export const Header: React.FC<HeaderProps> = ({
   onLogout,
   activeFiltersCount = 0,
 }) => {
-  const [showDesktopSearch, setShowDesktopSearch] = React.useState(false)
+  const [showDesktopSearch, setShowDesktopSearch] = React.useState(false);
 
   return (
     <header className="sticky top-0 z-40 w-full bg-[#0D0B0A]/95 backdrop-blur-md border-b border-[#241A14]">
@@ -56,8 +56,8 @@ export const Header: React.FC<HeaderProps> = ({
         <div className="flex items-center gap-8">
           <button
             type="button"
-            onClick={() => onNavClick?.('inicio')}
-            className="text-sm font-bold  uppercase tracking-widest text-[#F5F2EB] hover:text-[#E0A96D] transition-colors"
+            onClick={() => onNavClick?.("inicio")}
+            className="text-sm font-bold cursor-pointer  uppercase tracking-widest text-[#F5F2EB] hover:text-[#E0A96D] transition-colors"
           >
             KURIO
           </button>
@@ -66,25 +66,26 @@ export const Header: React.FC<HeaderProps> = ({
         {/* Desktop Navigation Links */}
         <nav className="flex items-center gap-8">
           {NAV_LINKS.map((link) => {
-            const isActive = activeNav === link.id
+            const isActive = activeNav === link.id;
             return (
-              <button
+              <a
                 key={link.id}
+                href={`#${link.id}`}
                 type="button"
-                onClick={() => onNavClick?.(link.id)}
+                // onClick={() => onNavClick?.(link.id)}
                 className={cn(
-                  'relative py-2 text-sm font-medium tracking-wide transition-colors',
+                  "relative py-2 cursor-pointer text-sm font-medium tracking-wide transition-colors",
                   isActive
-                    ? 'text-[#E0A96D] font-bold'
-                    : 'text-[#F5F1EB] hover:text-[#E0A96D]'
+                    ? "text-[#E0A96D] font-bold"
+                    : "text-[#F5F1EB] hover:text-[#E0A96D]",
                 )}
               >
                 {link.label}
                 {isActive && (
                   <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#E0A96D] rounded-full" />
                 )}
-              </button>
-            )
+              </a>
+            );
           })}
         </nav>
 
@@ -105,8 +106,8 @@ export const Header: React.FC<HeaderProps> = ({
               <button
                 type="button"
                 onClick={() => {
-                  setShowDesktopSearch(false)
-                  onSearchChange('')
+                  setShowDesktopSearch(false);
+                  onSearchChange("");
                 }}
                 className="absolute right-2 text-[#8C7C6F] hover:text-[#F3E8E2]"
               >
@@ -120,7 +121,7 @@ export const Header: React.FC<HeaderProps> = ({
               aria-label="Buscar"
               className="p-2 text-[#F3E8E2] hover:text-[#E0A96D] transition-colors"
             >
-              <Search className="h-5 w-5" />
+              <Search className="h-5 w-5 cursor-pointer" />
             </button>
           )}
 
@@ -131,7 +132,7 @@ export const Header: React.FC<HeaderProps> = ({
             aria-label="Carrinho de compras"
             className="relative p-2 text-[#F3E8E2] hover:text-[#E0A96D] transition-colors"
           >
-            <ShoppingBag className="h-5 w-5" />
+            <ShoppingBag className="cursor-pointer h-5 w-5" />
             {cartCount > 0 && (
               <span className="absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#E0A96D] px-1 text-[10px] font-bold text-[#0D0B0A] font-mono">
                 {cartCount}
@@ -161,7 +162,7 @@ export const Header: React.FC<HeaderProps> = ({
             <Button
               onClick={onLoginClick}
               size="default"
-              className="bg-[#E0A96D] text-[#0D0B0A] hover:bg-[#E9B880] font-bold text-xs gap-2 px-5 py-2 rounded-lg font-mono"
+              className="bg-[#E0A96D] cursor-pointer text-[#0D0B0A] hover:bg-[#E9B880] font-bold text-xs gap-2 px-5 py-2 rounded-lg font-mono"
             >
               <LogIn className="h-4 w-4" />
               <span>Entrar</span>
@@ -186,7 +187,7 @@ export const Header: React.FC<HeaderProps> = ({
             {searchValue && (
               <button
                 type="button"
-                onClick={() => onSearchChange('')}
+                onClick={() => onSearchChange("")}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8C7C6F] hover:text-[#F3E8E2]"
               >
                 <X className="h-3.5 w-3.5" />
@@ -211,5 +212,5 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
       </div>
     </header>
-  )
-}
+  );
+};
