@@ -25,7 +25,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             </span>
           </div>
 
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold uppercase tracking-tight text-[#F5F2EB] leading-[1.08]">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold uppercase tracking-tight text-[#F5F2EB] leading-[1.25] [word-spacing:0.25em]">
             SEJA DONO DO FUTURO <br />
             DA ARTE DIGITAL
           </h1>
@@ -88,16 +88,16 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           <div className="relative flex items-center justify-between gap-3">
             {/* Left Content */}
             <div className="flex-1 space-y-2 pr-2">
-              <span className="text-[11px] font-medium tracking-wide text-[#E0A96D]/90">
+              <span className="text-[15px] font-medium tracking-wide text-[#F5F1EB]/90">
                 Bem-vindo à Kurio
               </span>
 
-              <h2 className="text-xl font-extrabold uppercase leading-tight text-[#F5F2EB]">
+              <h2 className="text-xl font-extrabold uppercase leading-tight text-[#F5F2EB] leading-[1.25] [word-spacing:0.25em]">
                 SEJA DONO DA <br />
                 CULTURA DIGITAL
               </h2>
 
-              <p className="text-xs text-[#A8988B] leading-relaxed line-clamp-3">
+              <p className="text-xs text-[#CFB28C] leading-relaxed line-clamp-3">
                 Descubra NFTs selecionados de criadores do mundo todo.
               </p>
 

@@ -7,6 +7,7 @@ import {
   X,
   UserCheck,
   LogOut,
+  ShoppingCart,
 } from 'lucide-react'
 import { Button } from '@/src/components/ui/button'
 import { Input } from '@/src/components/ui/input'
@@ -73,15 +74,15 @@ export const Header: React.FC<HeaderProps> = ({
                 type="button"
                 onClick={() => onNavClick?.(link.id)}
                 className={cn(
-                  'relative py-2 text-sm font-medium tracking-wide transition-colors',
+                  'relative py-2 text-sm font-mono font-regular rtracking-wide transition-colors',
                   isActive
-                    ? 'text-[#E0A96D] font-bold'
+                    ? 'text-[#E89B55] font-bold'
                     : 'text-[#F5F1EB] hover:text-[#E0A96D]'
                 )}
               >
                 {link.label}
                 {isActive && (
-                  <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#E0A96D] rounded-full" />
+                  <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#E89B55] rounded-full" />
                 )}
               </button>
             )
@@ -131,9 +132,9 @@ export const Header: React.FC<HeaderProps> = ({
             aria-label="Carrinho de compras"
             className="relative p-2 text-[#F3E8E2] hover:text-[#E0A96D] transition-colors"
           >
-            <ShoppingBag className="h-5 w-5" />
+            <ShoppingCart className="h-5 w-5" />
             {cartCount > 0 && (
-              <span className="absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#E0A96D] px-1 text-[10px] font-bold text-[#0D0B0A] font-mono">
+              <span className="absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#D28A4C] px-1 text-[10px] font-bold text-[#0D0B0A] font-mono">
                 {cartCount}
               </span>
             )}
@@ -142,7 +143,7 @@ export const Header: React.FC<HeaderProps> = ({
           {/* User Profile or Entrar Button */}
           {currentUser ? (
             <div className="flex items-center gap-2">
-              <div className="flex items-center gap-2 rounded-lg border border-[#34271E] bg-[#17110E] px-3 py-1.5 text-xs text-[#F5F2EB]">
+              <div className="flex items-center gap-2 rounded-lg border border-[#34271E] bg-[#D28A4C] px-3 py-1.5 text-xs text-[#F5F2EB]">
                 <UserCheck className="h-3.5 w-3.5 text-[#E0A96D]" />
                 <span className="font-mono font-bold truncate max-w-[100px]">
                   {currentUser.name}
@@ -161,9 +162,9 @@ export const Header: React.FC<HeaderProps> = ({
             <Button
               onClick={onLoginClick}
               size="default"
-              className="bg-[#E0A96D] text-[#0D0B0A] hover:bg-[#E9B880] font-bold text-xs gap-2 px-5 py-2 rounded-lg font-mono"
+              className="bg-[#D28A4C] text-[#0D0B0A] hover:bg-[#E9B880] font-bold text-[15px] gap-2 px-5 py-2 rounded-lg font-mono"
             >
-              <LogIn className="h-4 w-4" />
+              <LogIn className="h-4.5 w-4.5" />
               <span>Entrar</span>
             </Button>
           )}

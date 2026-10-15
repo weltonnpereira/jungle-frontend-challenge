@@ -1,16 +1,11 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
-
-import * as React from 'react'
-import { Header } from '@/src/components/common/Header'
-import { Footer } from '@/src/components/common/Footer'
-import { MobileNavigation } from '@/src/components/common/MobileNavigation'
-import { AuthModal, AuthMode } from '@/src/components/auth/AuthModal'
-import { Home } from '@/src/pages/Home'
-import { NFT } from '@/src/types/nft'
-import { MOCK_NFTS } from '@/src/mocks/nftData'
+import * as React from "react";
+import { Header } from "@/src/components/common/Header";
+import { Footer } from "@/src/components/common/Footer";
+import { MobileNavigation } from "@/src/components/common/MobileNavigation";
+import { AuthModal, AuthMode } from "@/src/components/auth/AuthModal";
+import { Home } from "@/src/pages/Home";
+import { NFT } from "@/src/types/nft";
+import { MOCK_NFTS } from "@/src/mocks/nftData";
 import {
   Sheet,
   SheetContent,
@@ -18,58 +13,58 @@ import {
   SheetTitle,
   SheetDescription,
   SheetFooter,
-} from '@/src/components/ui/sheet'
-import { Button } from '@/src/components/ui/button'
-import { Badge } from '@/src/components/ui/badge'
-import { X, CheckCircle2 } from 'lucide-react'
+} from "@/src/components/ui/sheet";
+import { Button } from "@/src/components/ui/button";
+import { Badge } from "@/src/components/ui/badge";
+import { X, CheckCircle2 } from "lucide-react";
 
 export default function App() {
-  const [activeNav, setActiveNav] = React.useState('inicio')
-  const [searchQuery, setSearchQuery] = React.useState('')
-  const [isMobileFilterOpen, setIsMobileFilterOpen] = React.useState(false)
-  const [isCartOpen, setIsCartOpen] = React.useState(false)
+  const [activeNav, setActiveNav] = React.useState("inicio");
+  const [searchQuery, setSearchQuery] = React.useState("");
+  const [isMobileFilterOpen, setIsMobileFilterOpen] = React.useState(false);
+  const [isCartOpen, setIsCartOpen] = React.useState(false);
 
   // Auth Modal state as specified
-  const [isAuthOpen, setIsAuthOpen] = React.useState(false)
-  const [authMode, setAuthMode] = React.useState<AuthMode>('login')
+  const [isAuthOpen, setIsAuthOpen] = React.useState(false);
+  const [authMode, setAuthMode] = React.useState<AuthMode>("login");
   const [currentUser, setCurrentUser] = React.useState<{
-    name: string
-    email: string
-  } | null>(null)
+    name: string;
+    email: string;
+  } | null>(null);
 
-  const [selectedNFT, setSelectedNFT] = React.useState<NFT | null>(null)
-  const [notification, setNotification] = React.useState<string | null>(null)
+  const [selectedNFT, setSelectedNFT] = React.useState<NFT | null>(null);
+  const [notification, setNotification] = React.useState<string | null>(null);
   const [cartItems, setCartItems] = React.useState<NFT[]>(() =>
-    MOCK_NFTS.slice(0, 6)
-  )
+    MOCK_NFTS.slice(0, 6),
+  );
 
   const showToast = (msg: string) => {
-    setNotification(msg)
+    setNotification(msg);
     setTimeout(() => {
-      setNotification((prev) => (prev === msg ? null : prev))
-    }, 3000)
-  }
+      setNotification((prev) => (prev === msg ? null : prev));
+    }, 3000);
+  };
 
   const handleSelectNFT = (nft: NFT) => {
-    setSelectedNFT(nft)
-  }
+    setSelectedNFT(nft);
+  };
 
   const handleAddToCart = (nft: NFT) => {
     if (!cartItems.some((item) => item.id === nft.id)) {
-      setCartItems((prev) => [...prev, nft])
-      showToast(`"${nft.name}" adicionado ao carrinho!`)
+      setCartItems((prev) => [...prev, nft]);
+      showToast(`"${nft.name}" adicionado ao carrinho!`);
     } else {
-      showToast(`"${nft.name}" já está no carrinho.`)
+      showToast(`"${nft.name}" já está no carrinho.`);
     }
-    setSelectedNFT(null)
-  }
+    setSelectedNFT(null);
+  };
 
   const handleRemoveFromCart = (id: string) => {
-    setCartItems((prev) => prev.filter((item) => item.id !== id))
-    showToast('Item removido do carrinho.')
-  }
+    setCartItems((prev) => prev.filter((item) => item.id !== id));
+    showToast("Item removido do carrinho.");
+  };
 
-  const cartTotal = cartItems.reduce((acc, curr) => acc + curr.price, 0)
+  const cartTotal = cartItems.reduce((acc, curr) => acc + curr.price, 0);
 
   return (
     <div className="min-h-screen bg-[#0D0B0A] text-[#F3E8E2] flex flex-col font-sans">
@@ -85,9 +80,9 @@ export default function App() {
       <Header
         activeNav={activeNav}
         onNavClick={(nav) => {
-          setActiveNav(nav)
-          if (nav !== 'inicio') {
-            showToast(`Navegando para a seção: ${nav.toUpperCase()}`)
+          setActiveNav(nav);
+          if (nav !== "inicio") {
+            showToast(`Navegando para a seção: ${nav.toUpperCase()}`);
           }
         }}
         searchValue={searchQuery}
@@ -97,12 +92,12 @@ export default function App() {
         onOpenFiltersSheet={() => setIsMobileFilterOpen(true)}
         currentUser={currentUser}
         onLogout={() => {
-          setCurrentUser(null)
-          showToast('Sessão encerrada com sucesso.')
+          setCurrentUser(null);
+          showToast("Sessão encerrada com sucesso.");
         }}
         onLoginClick={() => {
-          setAuthMode('login')
-          setIsAuthOpen(true)
+          setAuthMode("login");
+          setIsAuthOpen(true);
         }}
       />
 
@@ -114,18 +109,18 @@ export default function App() {
           isMobileFilterOpen={isMobileFilterOpen}
           setIsMobileFilterOpen={setIsMobileFilterOpen}
           onSelectNFT={handleSelectNFT}
-          onToggleLike={(_id) => showToast('Favoritos atualizados')}
+          onToggleLike={(_id) => showToast("Favoritos atualizados")}
           onExploreGenesis={() => {
-            showToast('Explorando Lançamentos Gênesis')
+            showToast("Explorando Lançamentos Gênesis");
             document
-              .getElementById('catalogo-nfts')
-              ?.scrollIntoView({ behavior: 'smooth' })
+              .getElementById("catalogo-nfts")
+              ?.scrollIntoView({ behavior: "smooth" });
           }}
           onExploreCurated={() => {
-            showToast('Explorando Coleções Curadas')
+            showToast("Explorando Coleções Curadas");
             document
-              .getElementById('catalogo-nfts')
-              ?.scrollIntoView({ behavior: 'smooth' })
+              .getElementById("catalogo-nfts")
+              ?.scrollIntoView({ behavior: "smooth" });
           }}
           onReadArticle={(slug) => showToast(`Abrindo artigo: ${slug}`)}
           onSubscribeNewsletter={(email) =>
@@ -141,20 +136,22 @@ export default function App() {
       <MobileNavigation
         cartCount={cartItems.length}
         onTabChange={(tab) => {
-          if (tab === 'cart') {
-            setIsCartOpen(true)
-          } else if (tab === 'favorites') {
-            showToast('Visualizando lista de favoritos')
-          } else if (tab === 'profile') {
+          if (tab === "cart") {
+            setIsCartOpen(true);
+          } else if (tab === "favorites") {
+            showToast("Visualizando lista de favoritos");
+          } else if (tab === "profile") {
             if (currentUser) {
-              showToast(`Perfil logado como: ${currentUser.name}`)
+              showToast(`Perfil logado como: ${currentUser.name}`);
             } else {
-              setAuthMode('login')
-              setIsAuthOpen(true)
+              setAuthMode("login");
+              setIsAuthOpen(true);
             }
           }
         }}
-        onScanClick={() => showToast('Abrindo leitor de QR e cunhagem rápida...')}
+        onScanClick={() =>
+          showToast("Abrindo leitor de QR e cunhagem rápida...")
+        }
       />
 
       {/* Unified Auth Modal (Desktop Dialog & Mobile Sheet) */}
@@ -164,20 +161,20 @@ export default function App() {
         authMode={authMode}
         setAuthMode={setAuthMode}
         onSuccess={(userData) => {
-          setCurrentUser(userData)
-          showToast(`Bem-vindo à Kurio, ${userData.name}!`)
+          setCurrentUser(userData);
+          showToast(`Bem-vindo à Kurio, ${userData.name}!`);
         }}
         onForgotPassword={() => {
-          showToast('Instruções de redefinição enviadas para seu e-mail.')
+          showToast("Instruções de redefinição enviadas para seu e-mail.");
         }}
         onSocialLogin={(provider) => {
-          const providerName = provider === 'google' ? 'Google' : 'Facebook'
+          const providerName = provider === "google" ? "Google" : "Facebook";
           setCurrentUser({
             name: `${providerName} Collector`,
             email: `collector@${provider}.com`,
-          })
-          setIsAuthOpen(false)
-          showToast(`Conectado com sucesso via ${providerName}!`)
+          });
+          setIsAuthOpen(false);
+          showToast(`Conectado com sucesso via ${providerName}!`);
         }}
       />
 
@@ -190,7 +187,8 @@ export default function App() {
                 Carrinho de Compras ({cartItems.length})
               </SheetTitle>
               <SheetDescription className="text-xs text-[#A8988B]">
-                Revise os NFTs selecionados antes de finalizar a transação na blockchain.
+                Revise os NFTs selecionados antes de finalizar a transação na
+                blockchain.
               </SheetDescription>
             </SheetHeader>
 
@@ -244,8 +242,8 @@ export default function App() {
             <Button
               disabled={cartItems.length === 0}
               onClick={() => {
-                showToast('Transação enviada para assinatura da carteira!')
-                setIsCartOpen(false)
+                showToast("Transação enviada para assinatura da carteira!");
+                setIsCartOpen(false);
               }}
               className="w-full bg-[#E0A96D] text-[#0D0B0A] hover:bg-[#E9B880] font-bold"
             >
@@ -278,19 +276,19 @@ export default function App() {
 
               <div className="flex-1 space-y-3 text-left w-full">
                 <Badge variant="rare" className="bg-[#D48D48] text-[#0D0B0A]">
-                  {selectedNFT.rarity || 'Autêntico'}
+                  {selectedNFT.rarity || "Autêntico"}
                 </Badge>
                 <h3 className="text-xl font-bold text-[#F5F2EB]">
                   {selectedNFT.name}
                 </h3>
                 <p className="text-xs text-[#A8988B]">
-                  Coleção:{' '}
+                  Coleção:{" "}
                   <span className="text-[#E0A96D]">
                     {selectedNFT.collection}
                   </span>
                 </p>
                 <p className="text-xs text-[#A8988B]">
-                  Rede:{' '}
+                  Rede:{" "}
                   <span className="text-[#F3E8E2]">{selectedNFT.network}</span>
                 </p>
 
@@ -317,5 +315,5 @@ export default function App() {
         </div>
       )}
     </div>
-  )
+  );
 }
