@@ -1,25 +1,26 @@
-import * as React from 'react'
+import * as React from "react";
 import {
   Dialog,
   DialogContent,
   DialogTitle,
   DialogDescription,
-} from '@/src/components/ui/dialog'
+} from "@/src/components/ui/dialog";
 import {
   Sheet,
   SheetContent,
   SheetTitle,
   SheetDescription,
-} from '@/src/components/ui/sheet'
-import { Button } from '@/src/components/ui/button'
-import { OrderConfirmationData } from '@/src/types/cart'
-import { ExternalLink, X } from 'lucide-react'
+} from "@/src/components/ui/sheet";
+import { Button } from "@/src/components/ui/button";
+import { OrderConfirmationData } from "@/src/types/cart";
+import { ExternalLink, X } from "lucide-react";
+import { useMediaQuery } from "@/src/hooks/use-media-query";
 
 export interface OrderConfirmationModalProps {
-  isOpen: boolean
-  onClose: () => void
-  orderData?: OrderConfirmationData | null
-  onViewEtherscan?: (txId: string) => void
+  isOpen: boolean;
+  onClose: () => void;
+  orderData?: OrderConfirmationData | null;
+  onViewEtherscan?: (txId: string) => void;
 }
 
 export const OrderConfirmationModal: React.FC<OrderConfirmationModalProps> = ({
@@ -28,18 +29,24 @@ export const OrderConfirmationModal: React.FC<OrderConfirmationModalProps> = ({
   orderData,
   onViewEtherscan,
 }) => {
+  function useIsMounted() {
+    const [mounted, setMounted] = React.useState(false);
+    React.useEffect(() => setMounted(true), []);
+    return mounted;
+  }
+
   // Fallback default data matching Confirmação de Pedido desktop 4.jpg
   const data = orderData || {
-    transactionId: '0xA91F...E82C',
-    date: '29 Jul, 2026',
+    transactionId: "0xA91F...E82C",
+    date: "29 Jul, 2026",
     total: 26.846,
     subtotal: 26.83,
     discount: 0,
     networkFee: 0.016,
-    wallet: 'MetaMask',
-    network: 'Ethereum',
+    wallet: "MetaMask",
+    network: "Ethereum",
     items: [],
-  }
+  };
 
   // Envelope with THANK YOU seal SVG
   const ThankYouEnvelopeIcon = () => (
@@ -84,7 +91,7 @@ export const OrderConfirmationModal: React.FC<OrderConfirmationModalProps> = ({
         YOU
       </text>
     </svg>
-  )
+  );
 
   const renderReceiptContent = () => (
     <div className="space-y-6 pt-2">
@@ -93,7 +100,7 @@ export const OrderConfirmationModal: React.FC<OrderConfirmationModalProps> = ({
         <div className="p-2">
           <ThankYouEnvelopeIcon />
         </div>
-        <h2 className="font-mono text-lg sm:text-xl font-bold text-[#F5F2EB]">
+        <h2 className="font-mono text-lg sm:text-md font-bold text-[#CFB28C]">
           Seus NFTs agora estão na sua carteira
         </h2>
       </div>
@@ -101,28 +108,28 @@ export const OrderConfirmationModal: React.FC<OrderConfirmationModalProps> = ({
       {/* Meta Summary Box (4 Columns) */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 py-3 border-y border-[#261E18] text-xs font-mono">
         <div>
-          <span className="block text-[11px] text-[#8C7C6F]">
+          <span className="block text-[11px] text-[#CFB28C]">
             ID da transação
           </span>
-          <span className="text-[#F3E8E2] font-semibold truncate block mt-0.5">
+          <span className="text-[#CFB28C] font-semibold truncate block mt-0.5">
             {data.transactionId}
           </span>
         </div>
         <div>
-          <span className="block text-[11px] text-[#8C7C6F]">Data</span>
-          <span className="text-[#F3E8E2] font-semibold block mt-0.5">
+          <span className="block text-[11px] text-[#CFB28C]">Data</span>
+          <span className="text-[#CFB28C] font-semibold block mt-0.5">
             {data.date}
           </span>
         </div>
         <div>
-          <span className="block text-[11px] text-[#8C7C6F]">Total</span>
-          <span className="text-[#E0A96D] font-bold block mt-0.5">
+          <span className="block text-[11px] text-[#CFB28C]">Total</span>
+          <span className="text-[#CFB28C] font-bold block mt-0.5">
             {data.total.toFixed(3)} ETH
           </span>
         </div>
         <div>
-          <span className="block text-[11px] text-[#8C7C6F]">Carteira</span>
-          <span className="text-[#F3E8E2] font-semibold block mt-0.5">
+          <span className="block text-[11px] text-[#CFB28C]">Carteira</span>
+          <span className="text-[#CFB28C] font-semibold block mt-0.5">
             {data.wallet}
           </span>
         </div>
@@ -135,7 +142,7 @@ export const OrderConfirmationModal: React.FC<OrderConfirmationModalProps> = ({
         </h4>
 
         {/* Table header */}
-        <div className="flex items-center justify-between text-xs font-mono text-[#8C7C6F] pb-1 border-b border-[#261E18]">
+        <div className="flex items-center justify-between text-xs font-mono text-[#F5F1EB] pb-1 border-b border-[#261E18]">
           <span className="w-1/2">NFTs</span>
           <span className="w-1/4 text-center">Edições</span>
           <span className="w-1/4 text-right">Subtotal</span>
@@ -201,73 +208,78 @@ export const OrderConfirmationModal: React.FC<OrderConfirmationModalProps> = ({
       </div>
 
       {/* Confirmation Narration */}
-      <p className="font-mono text-xs text-[#A8988B] text-center leading-relaxed max-w-sm mx-auto">
+      <p className="font-mono text-xs text-[#CFB28C] text-center leading-relaxed max-w-sm mx-auto">
         Transação confirmada na Ethereum. A propriedade foi transferida para sua
         carteira conectada e registrada na rede.
       </p>
 
       {/* Etherscan Button */}
-      <div className="pt-2">
+      <div className="pt-2 flex justify-center">
         <Button
           onClick={() => {
-            onViewEtherscan?.(data.transactionId)
+            onViewEtherscan?.(data.transactionId);
             window.open(
               `https://etherscan.io/tx/${data.transactionId}`,
-              '_blank',
-              'noopener,noreferrer'
-            )
+              "_blank",
+              "noopener,noreferrer",
+            );
           }}
-          className="w-full h-11 rounded-xl bg-[#D48D48] font-mono text-xs font-bold text-[#0D0B0A] hover:bg-[#E0A96D] shadow-lg shadow-[#D48D48]/15"
+          className="w-[50%] h-11 rounded-xl bg-[#D48D48] font-mono text-md font-bold text-[#0D0B0A] hover:bg-[#E0A96D] shadow-lg shadow-[#D48D48]/15"
         >
           <span>Ver no Etherscan</span>
           <ExternalLink className="h-3.5 w-3.5 ml-1.5" />
         </Button>
       </div>
     </div>
-  )
+  );
+
+  const isDesktop = useMediaQuery("(min-width: 640px)");
+  const isMounted = useIsMounted();
+
+  if (!isMounted || !isOpen) return null;
 
   return (
     <>
-      {/* Desktop Dialog */}
-      <div className="hidden sm:block">
-        <Dialog open={isOpen} onOpenChange={onClose}>
-          <DialogContent className="max-w-lg rounded-2xl border border-[#34271E] bg-[#16110E] p-8 pb-7 text-[#F3E8E2] shadow-2xl overflow-hidden">
-            <DialogTitle className="sr-only">
-              Confirmação de Pedido de NFTs
-            </DialogTitle>
-            <DialogDescription className="sr-only">
-              Recibo e detalhes da transação na blockchain
-            </DialogDescription>
+      {isDesktop ? (
+        <div className="hidden sm:block">
+          <Dialog open={isOpen} onOpenChange={onClose}>
+            <DialogContent className="max-w-lg border border-[#34271E] rounded-none bg-[#241612] p-8 pb-7 text-[#F3E8E2] shadow-2xl overflow-hidden">
+              <DialogTitle className="sr-only">
+                Confirmação de Pedido de NFTs
+              </DialogTitle>
+              <DialogDescription className="sr-only">
+                Recibo e detalhes da transação na blockchain
+              </DialogDescription>
 
-            {renderReceiptContent()}
+              {renderReceiptContent()}
 
-            {/* Bottom caramel accent strip */}
-            <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-[#D48D48]" />
-          </DialogContent>
-        </Dialog>
-      </div>
+              {/* Bottom caramel accent strip */}
+              <div className="absolute bottom-0 left-0 right-0 h-2 bg-[#D28A4C] rounded-none pointer-events-none" />
+            </DialogContent>
+          </Dialog>
+        </div>
+      ) : (
+        <div className="sm:hidden">
+          <Sheet open={isOpen} onOpenChange={onClose}>
+            <SheetContent
+              side="bottom"
+              className="h-[95vh] max-h-[95vh] w-full rounded-t-3xl border-t border-[#34271E] bg-[#241612] p-6 pt-5 overflow-y-auto"
+            >
+              <SheetTitle className="sr-only">
+                Confirmação de Pedido de NFTs
+              </SheetTitle>
+              <SheetDescription className="sr-only">
+                Recibo de compra
+              </SheetDescription>
 
-      {/* Mobile Sheet Fullscreen */}
-      <div className="sm:hidden">
-        <Sheet open={isOpen} onOpenChange={onClose}>
-          <SheetContent
-            side="bottom"
-            className="h-[95vh] max-h-[95vh] w-full rounded-t-3xl border-t border-[#34271E] bg-[#140E0B] p-6 pt-5 overflow-y-auto"
-          >
-            <SheetTitle className="sr-only">
-              Confirmação de Pedido de NFTs
-            </SheetTitle>
-            <SheetDescription className="sr-only">
-              Recibo de compra
-            </SheetDescription>
+              {/* Top Drag Indicator */}
+              <div className="mx-auto mb-3 h-1 w-12 rounded-full bg-[#3D2E23]" />
 
-            {/* Top Drag Indicator */}
-            <div className="mx-auto mb-3 h-1 w-12 rounded-full bg-[#3D2E23]" />
-
-            {renderReceiptContent()}
-          </SheetContent>
-        </Sheet>
-      </div>
+              {renderReceiptContent()}
+            </SheetContent>
+          </Sheet>
+        </div>
+      )}
     </>
-  )
-}
+  );
+};
