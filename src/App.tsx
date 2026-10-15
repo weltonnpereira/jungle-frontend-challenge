@@ -3,27 +3,33 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import * as React from "react";
-import { Header } from "@/src/components/common/Header";
-import { Footer } from "@/src/components/common/Footer";
-import { MobileNavigation } from "@/src/components/common/MobileNavigation";
-import { AuthModal, AuthMode } from "@/src/components/auth/AuthModal";
-import { CartView } from "@/src/components/cart/CartView";
-import { CheckoutView } from "@/src/components/checkout/CheckoutView";
-import { OrderConfirmationModal } from "@/src/components/checkout/OrderConfirmationModal";
-import { NFTDetailView } from "@/src/components/nft/NFTDetailView";
-import { Home } from "@/src/pages/Home";
-import { NFT } from "@/src/types/nft";
-import {
-  CartItem,
-  OrderConfirmationData,
-  CollectorProfile,
-} from "@/src/types/cart";
-import { MOCK_NFTS } from "@/src/mocks/nftData";
-import { CheckCircle2 } from "lucide-react";
-import { useMediaQuery } from "./hooks/use-media-query";
+import * as React from 'react'
+import { Header } from '@/src/components/common/Header'
+import { Footer } from '@/src/components/common/Footer'
+import { MobileNavigation } from '@/src/components/common/MobileNavigation'
+import { AuthModal, AuthMode } from '@/src/components/auth/AuthModal'
+import { CartView } from '@/src/components/cart/CartView'
+import { CheckoutView } from '@/src/components/checkout/CheckoutView'
+import { OrderConfirmationModal } from '@/src/components/checkout/OrderConfirmationModal'
+import { NFTDetailView } from '@/src/components/nft/NFTDetailView'
+import { ProfileView } from '@/src/components/ProfileView'
+import { WalletsView } from '@/src/components/WalletsView'
+import { Home } from '@/src/pages/Home'
+import { NFT } from '@/src/types/nft'
+import { CartItem, OrderConfirmationData, CollectorProfile } from '@/src/types/cart'
+import { MOCK_NFTS } from '@/src/mocks/nftData'
+import { api } from '@/src/services/api'
+import { socketSimulator } from '@/src/services/socket'
+import { CheckCircle2 } from 'lucide-react'
+import { useMediaQuery } from './hooks/use-media-query'
 
-export type CurrentView = "home" | "cart" | "checkout" | "nft-details";
+export type CurrentView =
+  | 'home'
+  | 'cart'
+  | 'checkout'
+  | 'nft-details'
+  | 'profile'
+  | 'wallets'
 
 export default function App() {
   function useIsMounted() {
@@ -56,7 +62,7 @@ export default function App() {
   // Notification Toast State
   const [notification, setNotification] = React.useState<string | null>(null);
 
-  // Cart State (Initialized with the exact items shown in Carrinho de NFTs desktop 2.jpg)
+  // Cart State (Initialized with items matching screenshots)
   const [cartItems, setCartItems] = React.useState<CartItem[]>(() => [
     {
       id: "cart-1",
@@ -79,7 +85,35 @@ export default function App() {
       edition: "1/10",
       unitPrice: 1.79,
     },
-  ]);
+  ])
+
+  // Check existing session on mount via MSW api
+  React.useEffect(() => {
+    api
+      .get('/auth/session')
+      .then((res: any) => {
+        if (res.data?.user) {
+          setCurrentUser(res.data.user)
+        }
+      })
+      .catch(() => {
+        // no active session
+      })
+  }, [])
+
+  // Listen to simulated real-time socket events
+  React.useEffect(() => {
+    const unsubNft = socketSimulator.on('nft.updated', (event) => {
+      showToast(`Atualização em tempo real: Preço do NFT atualizado!`)
+    })
+    const unsubOrder = socketSimulator.on('order.updated', (event) => {
+      showToast(`Status do pedido atualizado: ${event.status}`)
+    })
+    return () => {
+      unsubNft()
+      unsubOrder()
+    }
+  }, [])
 
   const showToast = (msg: string) => {
     setNotification(msg);
@@ -89,27 +123,39 @@ export default function App() {
   };
 
   // Cart operations
-  const handleUpdateQuantity = (id: string, delta: number) => {
-    setCartItems(
-      (prev) =>
-        prev
-          .map((item) => {
-            if (item.id === id) {
-              const nextQty = item.quantity + delta;
-              return nextQty > 0 ? { ...item, quantity: nextQty } : null;
-            }
-            return item;
-          })
-          .filter(Boolean) as CartItem[],
-    );
-  };
+  const handleUpdateQuantity = async (id: string, delta: number) => {
+    setCartItems((prev) =>
+      prev
+        .map((item) => {
+          if (item.id === id) {
+            const nextQty = item.quantity + delta
+            return nextQty > 0 ? { ...item, quantity: nextQty } : null
+          }
+          return item
+        })
+        .filter(Boolean) as CartItem[]
+    )
+  }
 
-  const handleRemoveItem = (id: string) => {
-    setCartItems((prev) => prev.filter((item) => item.id !== id));
-    showToast("Item removido do carrinho.");
-  };
+  const handleRemoveItem = async (id: string) => {
+    setCartItems((prev) => prev.filter((item) => item.id !== id))
+    try {
+      await api.delete(`/cart/${id}`)
+    } catch {
+      // fallback
+    }
+    showToast('Item removido do carrinho.')
+  }
 
-  const handleAddToCart = (nft: NFT, quantity = 1, edition = "1/50") => {
+  const handleAddToCart = async (nft: NFT, quantity = 1, edition = '1/50') => {
+    const newItem: CartItem = {
+      id: `cart-${Date.now()}`,
+      nft,
+      quantity,
+      edition,
+      unitPrice: nft.price,
+    }
+
     setCartItems((prev) => {
       const existing = prev.find((item) => item.nft.id === nft.id);
       if (existing) {
@@ -119,19 +165,16 @@ export default function App() {
             : item,
         );
       }
-      return [
-        ...prev,
-        {
-          id: `cart-${Date.now()}`,
-          nft,
-          quantity,
-          edition,
-          unitPrice: nft.price,
-        },
-      ];
-    });
-    showToast(`"${nft.name}" adicionado ao carrinho!`);
-  };
+      return [...prev, newItem]
+    })
+
+    try {
+      await api.post('/cart', newItem)
+    } catch {
+      // fallback
+    }
+    showToast(`"${nft.name}" adicionado ao carrinho!`)
+  }
 
   const handleBuyNow = (nft: NFT, quantity = 1, edition = "1/50") => {
     handleAddToCart(nft, quantity, edition);
@@ -145,36 +188,38 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const handleConfirmPurchase = (data: {
-    profile: CollectorProfile;
-    selectedWallet: string;
-    total: number;
-    items: CartItem[];
+  const handleConfirmPurchase = async (data: {
+    profile: CollectorProfile
+    selectedWallet: string
+    total: number
+    items: CartItem[]
   }) => {
-    const confirmation: OrderConfirmationData = {
-      transactionId: "0xA91F9a38C201C46E82C09b",
-      date: new Date().toLocaleDateString("pt-BR", {
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-      }),
-      total: data.total,
-      subtotal: data.items.reduce(
-        (acc, item) => acc + item.unitPrice * item.quantity,
-        0,
-      ),
-      discount: 0,
-      networkFee: 0.016,
-      wallet: data.selectedWallet,
-      items: [...data.items],
-      network: data.profile.network,
-    };
+    try {
+      const idempotencyKey = `order-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`
+      const res = await api.post(
+        '/orders',
+        {
+          profile: data.profile,
+          selectedWallet: data.selectedWallet,
+          items: data.items,
+          total: data.total,
+        },
+        {
+          headers: {
+            'Idempotency-Key': idempotencyKey,
+          },
+        }
+      )
 
-    setOrderConfirmationData(confirmation);
-    setIsOrderConfirmedOpen(true);
-    setCartItems([]); // Empty cart after successful purchase
-    showToast("Transação confirmada na blockchain!");
-  };
+      const confirmation: OrderConfirmationData = res.data
+      setOrderConfirmationData(confirmation)
+      setIsOrderConfirmedOpen(true)
+      setCartItems([])
+      showToast('Transação confirmada na blockchain via MSW API!')
+    } catch (err: any) {
+      showToast(err.message || 'Erro ao processar transação.')
+    }
+  }
 
   const totalCartCount = cartItems.reduce(
     (sum, item) => sum + item.quantity,
@@ -222,9 +267,19 @@ export default function App() {
           setIsMobileFilterOpen(true);
         }}
         currentUser={currentUser}
-        onLogout={() => {
-          setCurrentUser(null);
-          showToast("Sessão encerrada com sucesso.");
+        onProfileClick={() => {
+          setCurrentView('profile')
+          window.scrollTo({ top: 0, behavior: 'smooth' })
+        }}
+        onLogout={async () => {
+          try {
+            await api.post('/auth/logout')
+          } catch {
+            // fallback
+          }
+          setCurrentUser(null)
+          showToast('Sessão encerrada com sucesso.')
+          setCurrentView('home')
         }}
         onLoginClick={() => {
           setAuthMode("login");
@@ -302,6 +357,38 @@ export default function App() {
             onSelectNFT={handleSelectNFT}
           />
         )}
+
+        {currentView === 'profile' && (
+          <ProfileView
+            onNavigateTab={(tab) => {
+              if (tab === 'wallets') setCurrentView('wallets')
+              else if (tab === 'profile') setCurrentView('profile')
+              else showToast(`Aba ${tab.toUpperCase()} selecionada`)
+            }}
+            onLogout={() => {
+              setCurrentUser(null)
+              setCurrentView('home')
+              showToast('Sessão encerrada.')
+            }}
+            onSaved={(msg) => showToast(msg)}
+          />
+        )}
+
+        {currentView === 'wallets' && (
+          <WalletsView
+            onNavigateTab={(tab) => {
+              if (tab === 'profile') setCurrentView('profile')
+              else if (tab === 'wallets') setCurrentView('wallets')
+              else showToast(`Aba ${tab.toUpperCase()} selecionada`)
+            }}
+            onLogout={() => {
+              setCurrentUser(null)
+              setCurrentView('home')
+              showToast('Sessão encerrada.')
+            }}
+            onSaved={(msg) => showToast(msg)}
+          />
+        )}
       </main>
 
       {/* Footer */}
@@ -318,7 +405,13 @@ export default function App() {
       <MobileNavigation
         cartCount={totalCartCount}
         activeTab={
-          currentView === "home" ? "home" : currentView === "cart" ? "cart" : ""
+          currentView === 'home'
+            ? 'home'
+            : currentView === 'cart'
+            ? 'cart'
+            : currentView === 'profile' || currentView === 'wallets'
+            ? 'profile'
+            : ''
         }
         onTabChange={(tab) => {
           if (tab === "home") {
@@ -331,16 +424,19 @@ export default function App() {
             showToast("Visualizando lista de favoritos");
           } else if (tab === "profile") {
             if (currentUser) {
-              showToast(`Perfil conectado: ${currentUser.name}`);
+              setCurrentView('profile')
+              window.scrollTo({ top: 0, behavior: 'smooth' })
             } else {
               setAuthMode("login");
               setIsAuthOpen(true);
             }
           }
         }}
-        onScanClick={() =>
-          showToast("Abrindo leitor de QR e cunhagem rápida...")
-        }
+        onScanClick={() => {
+          // Trigger a simulated real-time price change via socket
+          socketSimulator.simulatePriceDrop('nft-1', 0.99)
+          showToast('Sincronização em tempo real via Socket.IO!')
+        }}
       />
 
       {/* Unified Auth Modal */}
@@ -349,21 +445,39 @@ export default function App() {
         onOpenChange={setIsAuthOpen}
         authMode={authMode}
         setAuthMode={setAuthMode}
-        onSuccess={(userData) => {
-          setCurrentUser(userData);
-          showToast(`Bem-vindo à Kurio, ${userData.name}!`);
+        onSuccess={async (userData) => {
+          try {
+            if (authMode === 'login') {
+              const res = await api.post('/auth/login', {
+                email: userData.email,
+                password: 'password123',
+              })
+              setCurrentUser(res.data.user)
+            } else {
+              const res = await api.post('/auth/register', {
+                name: userData.name,
+                email: userData.email,
+                password: 'password123',
+              })
+              setCurrentUser(res.data.user)
+            }
+          } catch {
+            setCurrentUser(userData)
+          }
+          showToast(`Bem-vindo à Kurio, ${userData.name}!`)
         }}
         onForgotPassword={() => {
           showToast("Instruções enviadas para seu e-mail.");
         }}
-        onSocialLogin={(provider) => {
-          const providerName = provider === "google" ? "Google" : "Facebook";
-          setCurrentUser({
+        onSocialLogin={async (provider) => {
+          const providerName = provider === 'google' ? 'Google' : 'Facebook'
+          const user = {
             name: `${providerName} Collector`,
             email: `collector@${provider}.com`,
-          });
-          setIsAuthOpen(false);
-          showToast(`Conectado com sucesso via ${providerName}!`);
+          }
+          setCurrentUser(user)
+          setIsAuthOpen(false)
+          showToast(`Conectado com sucesso via ${providerName}!`)
         }}
       />
 
