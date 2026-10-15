@@ -9,7 +9,7 @@ export interface MintingDiaryProps {
 
 export const MintingDiary: React.FC<MintingDiaryProps> = ({ onReadArticle }) => {
   return (
-    <section className="w-full py-12">
+    <section id="aprenda" className="w-full py-12">
       {/* Section Header */}
       <div className="text-center mb-10 space-y-2">
         <h2 className="text-2xl sm:text-3xl font-extrabold text-[#F5F2EB] tracking-wide">

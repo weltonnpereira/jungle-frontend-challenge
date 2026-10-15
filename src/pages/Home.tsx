@@ -1,45 +1,45 @@
-import * as React from 'react'
-import { NFT, FilterState, TabCategory, SortOption } from '@/src/types/nft'
-import { MOCK_NFTS } from '@/src/mocks/nftData'
-import { HeroSection } from '@/src/components/home/HeroSection'
-import { FiltersSidebar } from '@/src/components/home/FiltersSidebar'
-import { NFTGrid } from '@/src/components/home/NFTGrid'
-import { PromoBanners } from '@/src/components/home/PromoBanners'
-import { MintingDiary } from '@/src/components/home/MintingDiary'
-import { FeaturesNewsletter } from '@/src/components/home/FeaturesNewsletter'
-import { MobileFilterSheet } from '@/src/components/home/MobileFilterSheet'
+import * as React from "react";
+import { NFT, FilterState, TabCategory, SortOption } from "@/src/types/nft";
+import { MOCK_NFTS } from "@/src/mocks/nftData";
+import { HeroSection } from "@/src/components/home/HeroSection";
+import { FiltersSidebar } from "@/src/components/home/FiltersSidebar";
+import { NFTGrid } from "@/src/components/home/NFTGrid";
+import { PromoBanners } from "@/src/components/home/PromoBanners";
+import { MintingDiary } from "@/src/components/home/MintingDiary";
+import { FeaturesNewsletter } from "@/src/components/home/FeaturesNewsletter";
+import { MobileFilterSheet } from "@/src/components/home/MobileFilterSheet";
 
 export interface HomeProps {
   /**
    * Optional NFT list passed from TanStack Query or mock API (MSW).
    * If not provided, fallback to internal mock data with active filters.
    */
-  nfts?: NFT[]
-  isLoading?: boolean
-  heroImage?: string
-  initialFilters?: Partial<FilterState>
-  onFilterChange?: (filters: FilterState) => void
-  onSelectNFT?: (nft: NFT) => void
-  onToggleLike?: (id: string) => void
-  onExploreGenesis?: () => void
-  onExploreCurated?: () => void
-  onReadArticle?: (slug: string) => void
-  onSubscribeNewsletter?: (email: string) => void
+  nfts?: NFT[];
+  isLoading?: boolean;
+  heroImage?: string;
+  initialFilters?: Partial<FilterState>;
+  onFilterChange?: (filters: FilterState) => void;
+  onSelectNFT?: (nft: NFT) => void;
+  onToggleLike?: (id: string) => void;
+  onExploreGenesis?: () => void;
+  onExploreCurated?: () => void;
+  onReadArticle?: (slug: string) => void;
+  onSubscribeNewsletter?: (email: string) => void;
   /**
    * Search query synced from the Header component
    */
-  searchQuery?: string
+  searchQuery?: string;
   /**
    * Controlled mobile filter sheet state
    */
-  isMobileFilterOpen?: boolean
-  setIsMobileFilterOpen?: (open: boolean) => void
+  isMobileFilterOpen?: boolean;
+  setIsMobileFilterOpen?: (open: boolean) => void;
 }
 
 export const Home: React.FC<HomeProps> = ({
   nfts: externalNfts,
   isLoading = false,
-  heroImage = '/assets/hero-nft.png',
+  heroImage = "/assets/hero-nft.png",
   initialFilters,
   onFilterChange,
   onSelectNFT,
@@ -48,45 +48,47 @@ export const Home: React.FC<HomeProps> = ({
   onExploreCurated,
   onReadArticle,
   onSubscribeNewsletter,
-  searchQuery = '',
+  searchQuery = "",
   isMobileFilterOpen: controlledMobileFilterOpen,
   setIsMobileFilterOpen: controlledSetMobileFilterOpen,
 }) => {
   // Filter States - ready to bind to URL (e.g. TanStack Router search params)
-  const [search, setSearch] = React.useState(initialFilters?.search ?? searchQuery)
+  const [search, setSearch] = React.useState(
+    initialFilters?.search ?? searchQuery,
+  );
   const [selectedCategory, setSelectedCategory] = React.useState<string | null>(
-    initialFilters?.category ?? null
-  )
+    initialFilters?.category ?? null,
+  );
   const [selectedNetwork, setSelectedNetwork] = React.useState<string | null>(
-    initialFilters?.network ?? null
-  )
+    initialFilters?.network ?? null,
+  );
   const [priceRange, setPriceRange] = React.useState<[number, number]>(
-    initialFilters?.priceRange ?? [0.02, 12.3]
-  )
+    initialFilters?.priceRange ?? [0.02, 12.3],
+  );
   const [sortBy, setSortBy] = React.useState<SortOption>(
-    initialFilters?.sortBy ?? 'recent'
-  )
+    initialFilters?.sortBy ?? "recent",
+  );
   const [activeTab, setActiveTab] = React.useState<TabCategory>(
-    initialFilters?.tab ?? 'all'
-  )
+    initialFilters?.tab ?? "all",
+  );
   const [currentPage, setCurrentPage] = React.useState<number>(
-    initialFilters?.page ?? 1
-  )
+    initialFilters?.page ?? 1,
+  );
 
   // Internal mobile sheet state fallback if not controlled
   const [internalMobileFilterOpen, setInternalMobileFilterOpen] =
-    React.useState(false)
+    React.useState(false);
   const isSheetOpen =
     controlledMobileFilterOpen !== undefined
       ? controlledMobileFilterOpen
-      : internalMobileFilterOpen
+      : internalMobileFilterOpen;
   const handleSheetOpenChange =
-    controlledSetMobileFilterOpen ?? setInternalMobileFilterOpen
+    controlledSetMobileFilterOpen ?? setInternalMobileFilterOpen;
 
   // Sync external search query
   React.useEffect(() => {
-    setSearch(searchQuery)
-  }, [searchQuery])
+    setSearch(searchQuery);
+  }, [searchQuery]);
 
   // Notify parent of filter state changes (for TanStack Router or Query refetch)
   const notifyFilterChange = React.useCallback(
@@ -100,8 +102,8 @@ export const Home: React.FC<HomeProps> = ({
         tab: activeTab,
         page: currentPage,
         ...overrides,
-      }
-      onFilterChange?.(state)
+      };
+      onFilterChange?.(state);
     },
     [
       search,
@@ -112,111 +114,115 @@ export const Home: React.FC<HomeProps> = ({
       activeTab,
       currentPage,
       onFilterChange,
-    ]
-  )
+    ],
+  );
 
   // Handlers
   const handleCategorySelect = (category: string | null) => {
-    setSelectedCategory(category)
-    setCurrentPage(1)
-    notifyFilterChange({ category, page: 1 })
-  }
+    setSelectedCategory(category);
+    setCurrentPage(1);
+    notifyFilterChange({ category, page: 1 });
+  };
 
   const handleNetworkSelect = (network: string | null) => {
-    setSelectedNetwork(network)
-    setCurrentPage(1)
-    notifyFilterChange({ network, page: 1 })
-  }
+    setSelectedNetwork(network);
+    setCurrentPage(1);
+    notifyFilterChange({ network, page: 1 });
+  };
 
   const handlePriceRangeChange = (range: [number, number]) => {
-    setPriceRange(range)
-  }
+    setPriceRange(range);
+  };
 
   const handleApplyPrice = () => {
-    setCurrentPage(1)
-    notifyFilterChange({ priceRange, page: 1 })
-  }
+    setCurrentPage(1);
+    notifyFilterChange({ priceRange, page: 1 });
+  };
 
   const handleTabChange = (tab: TabCategory) => {
-    setActiveTab(tab)
-    setCurrentPage(1)
-    notifyFilterChange({ tab, page: 1 })
-  }
+    setActiveTab(tab);
+    setCurrentPage(1);
+    notifyFilterChange({ tab, page: 1 });
+  };
 
   const handleSortChange = (sort: SortOption) => {
-    setSortBy(sort)
-    notifyFilterChange({ sortBy: sort })
-  }
+    setSortBy(sort);
+    notifyFilterChange({ sortBy: sort });
+  };
 
   const handlePageChange = (page: number) => {
-    setCurrentPage(page)
-    notifyFilterChange({ page })
-    window.scrollTo({ top: 400, behavior: 'smooth' })
-  }
+    setCurrentPage(page);
+    notifyFilterChange({ page });
+    window.scrollTo({ top: 400, behavior: "smooth" });
+  };
 
   const handleResetFilters = () => {
-    setSelectedCategory(null)
-    setSelectedNetwork(null)
-    setPriceRange([0.02, 12.3])
-    setSortBy('recent')
-    setActiveTab('all')
-    setCurrentPage(1)
+    setSelectedCategory(null);
+    setSelectedNetwork(null);
+    setPriceRange([0.02, 12.3]);
+    setSortBy("recent");
+    setActiveTab("all");
+    setCurrentPage(1);
     notifyFilterChange({
       category: null,
       network: null,
       priceRange: [0.02, 12.3],
-      sortBy: 'recent',
-      tab: 'all',
+      sortBy: "recent",
+      tab: "all",
       page: 1,
-    })
-  }
+    });
+  };
 
   // Calculate active filter count
   const activeFiltersCount =
     (selectedCategory ? 1 : 0) +
     (selectedNetwork ? 1 : 0) +
-    (priceRange[0] > 0.05 || priceRange[1] < 12.0 ? 1 : 0)
+    (priceRange[0] > 0.05 || priceRange[1] < 12.0 ? 1 : 0);
 
   // Filter & sort logic (used if external nfts prop is not provided or to filter mock data)
   const displayNFTs = React.useMemo(() => {
-    const source = externalNfts ?? MOCK_NFTS
+    const source = externalNfts ?? MOCK_NFTS;
 
     return source
       .filter((nft) => {
         // Search
         if (search) {
-          const q = search.toLowerCase()
-          const matchName = nft.name.toLowerCase().includes(q)
-          const matchCol = nft.collection.toLowerCase().includes(q)
-          if (!matchName && !matchCol) return false
+          const q = search.toLowerCase();
+          const matchName = nft.name.toLowerCase().includes(q);
+          const matchCol = nft.collection.toLowerCase().includes(q);
+          if (!matchName && !matchCol) return false;
         }
         // Category
         if (selectedCategory && nft.category !== selectedCategory) {
-          return false
+          return false;
         }
         // Network
         if (selectedNetwork && nft.network !== selectedNetwork) {
-          return false
+          return false;
         }
         // Price Range
         if (nft.price < priceRange[0] || nft.price > priceRange[1]) {
-          return false
+          return false;
         }
         // Tabs
-        if (activeTab === 'new' && !nft.tokenId.includes('4') && !nft.tokenId.includes('8')) {
+        if (
+          activeTab === "new" &&
+          !nft.tokenId.includes("4") &&
+          !nft.tokenId.includes("8")
+        ) {
           // simulation for new releases
         }
-        if (activeTab === 'trending' && (nft.likes ?? 0) < 150) {
-          return false
+        if (activeTab === "trending" && (nft.likes ?? 0) < 150) {
+          return false;
         }
-        return true
+        return true;
       })
       .sort((a, b) => {
-        if (sortBy === 'price_asc') return a.price - b.price
-        if (sortBy === 'price_desc') return b.price - a.price
-        if (sortBy === 'likes_desc') return (b.likes ?? 0) - (a.likes ?? 0)
-        return 0 // default recent
-      })
+        if (sortBy === "price_asc") return a.price - b.price;
+        if (sortBy === "price_desc") return b.price - a.price;
+        if (sortBy === "likes_desc") return (b.likes ?? 0) - (a.likes ?? 0);
+        return 0; // default recent
+      });
   }, [
     externalNfts,
     search,
@@ -225,7 +231,7 @@ export const Home: React.FC<HomeProps> = ({
     priceRange,
     activeTab,
     sortBy,
-  ])
+  ]);
 
   return (
     <div className="w-full bg-[#0D0B0A] text-[#F3E8E2] min-h-screen">
@@ -234,8 +240,8 @@ export const Home: React.FC<HomeProps> = ({
         <HeroSection
           heroImage={heroImage}
           onExploreClick={() => {
-            const catalogEl = document.getElementById('catalogo-nfts')
-            catalogEl?.scrollIntoView({ behavior: 'smooth' })
+            const catalogEl = document.getElementById("catalogo-nfts");
+            catalogEl?.scrollIntoView({ behavior: "smooth" });
           }}
         />
 
@@ -257,7 +263,7 @@ export const Home: React.FC<HomeProps> = ({
             </div>
 
             {/* NFT Grid & Tabs (Right column) */}
-            <div className="flex-1 w-full min-w-0">
+            <div id="mercado" className="flex-1 w-full min-w-0">
               <NFTGrid
                 nfts={displayNFTs}
                 isLoading={isLoading}
@@ -303,6 +309,6 @@ export const Home: React.FC<HomeProps> = ({
         activeFiltersCount={activeFiltersCount}
       />
     </div>
-  )
-}
-export default Home
+  );
+};
+export default Home;

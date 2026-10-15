@@ -14,7 +14,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   const [activeDot, setActiveDot] = React.useState(0)
 
   return (
-    <section className="relative w-full pt-4 pb-8 sm:py-12">
+    <section id="inicio" className="relative w-full pt-4 pb-8 sm:py-12">
       {/* Desktop Hero View (hidden on small mobile, visible on sm and up) */}
       <div className="hidden sm:grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
         {/* Left Column: Text & CTA */}

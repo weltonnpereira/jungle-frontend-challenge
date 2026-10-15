@@ -72,7 +72,7 @@ export const Header: React.FC<HeaderProps> = ({
                 key={link.id}
                 href={`#${link.id}`}
                 type="button"
-                // onClick={() => onNavClick?.(link.id)}
+                onClick={() => onNavClick?.(link.id)}
                 className={cn(
                   "relative py-2 cursor-pointer text-sm font-medium tracking-wide transition-colors",
                   isActive

@@ -12,7 +12,7 @@ export const PromoBanners: React.FC<PromoBannersProps> = ({
   onExploreCurated,
 }) => {
   return (
-    <section className="w-full py-8">
+    <section id="criadores" className="w-full py-8">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Banner 1: Lançamentos gênesis */}
         <div className="flex flex-col sm:flex-row overflow-hidden rounded-2xl border border-[#2E241D] bg-[#16120F] transition-all hover:border-[#E0A96D]/40">
