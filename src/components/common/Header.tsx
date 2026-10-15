@@ -22,6 +22,7 @@ export interface HeaderProps {
   onOpenFiltersSheet?: () => void
   onLoginClick?: () => void
   currentUser?: { name: string; email: string } | null
+  onProfileClick?: () => void
   onLogout?: () => void
   activeFiltersCount?: number
 }
@@ -43,6 +44,7 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenFiltersSheet,
   onLoginClick,
   currentUser = null,
+  onProfileClick,
   onLogout,
   activeFiltersCount = 0,
 }) => {
@@ -142,17 +144,25 @@ export const Header: React.FC<HeaderProps> = ({
           {/* User Profile or Entrar Button */}
           {currentUser ? (
             <div className="flex items-center gap-2">
-              <div className="flex items-center gap-2 rounded-lg border border-[#34271E] bg-[#17110E] px-3 py-1.5 text-xs text-[#F5F2EB]">
-                <UserCheck className="h-3.5 w-3.5 text-[#E0A96D]" />
-                <span className="font-mono font-bold truncate max-w-[100px]">
+              <button
+                type="button"
+                onClick={onProfileClick}
+                title="Acessar perfil do colecionador"
+                className="flex items-center gap-2.5 rounded-xl border border-[#34271E] bg-[#17110E] hover:border-[#E0A96D] hover:bg-[#201813] px-3.5 py-1.5 text-xs text-[#F5F2EB] transition-all duration-200 active:scale-98 group cursor-pointer shadow-sm shadow-black/40"
+              >
+                <div className="h-6 w-6 rounded-full overflow-hidden bg-[#261B14] border border-[#E0A96D]/50 flex items-center justify-center shrink-0">
+                  <UserCheck className="h-3.5 w-3.5 text-[#E0A96D]" />
+                </div>
+                <span className="font-mono font-bold truncate max-w-[120px] group-hover:text-[#E0A96D] transition-colors">
                   {currentUser.name}
                 </span>
-              </div>
+              </button>
               <button
                 type="button"
                 onClick={onLogout}
                 title="Sair"
-                className="p-2 text-[#8C7C6F] hover:text-red-400 transition-colors"
+                className="p-2 text-[#8C7C6F] hover:text-red-400 hover:bg-[#1A1410] rounded-lg transition-colors"
+                aria-label="Sair da conta"
               >
                 <LogOut className="h-4 w-4" />
               </button>
