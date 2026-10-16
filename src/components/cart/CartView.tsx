@@ -20,6 +20,8 @@ import { cn } from "@/src/lib/utils";
 export interface CartViewProps {
   items: CartItem[];
   onUpdateQuantity: (id: string, delta: number) => void;
+  discountPercent: number;
+  onApplyDiscount: (percent: number) => void;
   onRemoveItem: (id: string) => void;
   onCheckout: () => void;
   onContinueShopping: () => void;
@@ -29,13 +31,14 @@ export interface CartViewProps {
 export const CartView: React.FC<CartViewProps> = ({
   items,
   onUpdateQuantity,
+  discountPercent,
+  onApplyDiscount,
   onRemoveItem,
   onCheckout,
   onContinueShopping,
   onSelectRecommendedNFT,
 }) => {
   const [promoCode, setPromoCode] = React.useState("");
-  const [discountPercent, setDiscountPercent] = React.useState(0);
   const [promoMessage, setPromoMessage] = React.useState<string | null>(null);
   const [recommendedPage, setRecommendedPage] = React.useState(0);
 
@@ -52,14 +55,14 @@ export const CartView: React.FC<CartViewProps> = ({
     e.preventDefault();
     const code = promoCode.trim().toUpperCase();
     if (code === "KURIO10" || code === "KURIO" || code === "ARTE") {
-      setDiscountPercent(10);
+      onApplyDiscount(10);
       setPromoMessage("Cupom de 10% aplicado com sucesso!");
     } else if (code === "VIP20") {
-      setDiscountPercent(20);
+      onApplyDiscount(20);
       setPromoMessage("Cupom VIP de 20% aplicado!");
     } else if (code.length > 0) {
+      onApplyDiscount(0);
       setPromoMessage("Código inválido ou expirado.");
-      setDiscountPercent(0);
     }
   };
 

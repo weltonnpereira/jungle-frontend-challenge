@@ -7,17 +7,24 @@ import {
   ShieldCheck,
   Wallet,
 } from "lucide-react";
-import { CartItem, CollectorProfile } from "@/src/types/cart";
+import {
+  BlockchainNetwork,
+  CartItem,
+  CollectorProfile,
+  WalletType,
+} from "@/src/types/cart";
 import { Button } from "@/src/components/ui/button";
 import { Input } from "@/src/components/ui/input";
 import { Badge } from "@/src/components/ui/badge";
 import { cn } from "@/src/lib/utils";
+import api from "@/src/services/api";
 
 export interface CheckoutViewProps {
   items: CartItem[];
+  discountPercent?: number;
   onBackToCart: () => void;
   onConfirmPurchase: (orderData: {
-    profile: CollectorProfile;
+    profile: Partial<CollectorProfile>;
     selectedWallet: string;
     total: number;
     items: CartItem[];
@@ -26,24 +33,27 @@ export interface CheckoutViewProps {
 
 export const CheckoutView: React.FC<CheckoutViewProps> = ({
   items,
+  discountPercent = 0,
   onBackToCart,
   onConfirmPurchase,
 }) => {
   // Collector Profile Form State
-  const [profile, setProfile] = React.useState<CollectorProfile>({
-    displayName: "Nova Sato",
-    username: "@novasato",
-    network: "Ethereum",
-    profileName: "Galeria Kurio Principal",
-    walletAddress: "0xA91F9a38C201C46E82C09b",
-    secondaryWallet: "",
-    walletType: "Coinbase Wallet",
-    referralCode: "KURIO-2026",
-    email: "nova.sato@kurio.art",
-    ensName: "novasato",
-    useOtherWallet: false,
-    notes: "",
-  });
+  const [profile, setProfile] = React.useState<Partial<CollectorProfile>>({});
+  const [isLoading, setIsLoading] = React.useState(true);
+  const [secondaryFeedback, setSecondaryFeedback] = React.useState<
+    string | null
+  >(null);
+
+  React.useEffect(() => {
+    api
+      .get("/profile")
+      .then((res) => {
+        if (res.data) {
+          setProfile(res.data);
+        }
+      })
+      .finally(() => setIsLoading(false));
+  }, []);
 
   // Selected Wallet
   const [selectedWallet, setSelectedWallet] =
@@ -58,7 +68,8 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({
     (acc, item) => acc + item.unitPrice * item.quantity,
     0,
   );
-  const discountAmount = 0;
+
+  const discountAmount = (subtotal * discountPercent) / 100;
   const networkFee = items.length > 0 ? 0.016 : 0;
   const total = subtotal - discountAmount + networkFee;
 
@@ -75,6 +86,42 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({
       });
     }, 800);
   };
+
+  const handleToggleUseOtherWallet = (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const isChecking = e.target.checked;
+
+    if (isChecking && !profile.secondaryWallet?.address) {
+      setSecondaryFeedback(
+        "Você ainda não possui uma outra carteira cadastrada.",
+      );
+      setTimeout(() => setSecondaryFeedback(null), 4000);
+      return;
+    }
+
+    setProfile((prev) => ({
+      ...prev,
+      useOtherWallet: isChecking,
+
+      walletAddress:
+        isChecking && profile.secondaryWallet
+          ? profile.secondaryWallet.address
+          : prev.walletAddress,
+    }));
+  };
+
+  const secondary = profile.secondaryWallet;
+  const isAddressEqual =
+    secondary?.address &&
+    profile.walletAddress &&
+    secondary.address.toLowerCase().trim() ===
+      profile.walletAddress.toLowerCase().trim();
+
+  const showSecondaryCard =
+    Boolean(secondary?.id || secondary?.address) && !isAddressEqual;
+
+  if (isLoading) return <p>Carregando...</p>;
 
   return (
     <div className="w-full min-h-screen bg-[#0D0B0A] text-[#F3E8E2] pb-24 sm:pb-16">
@@ -121,6 +168,13 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({
               Perfil do colecionador
             </h2>
 
+            {secondaryFeedback && (
+              <div className="rounded-xl border border-[#E0A96D]/40 bg-[#1F1712] p-3 text-xs font-mono text-[#E0A96D] flex items-center gap-2">
+                <Check className="h-4 w-4 shrink-0" />
+                <span>{secondaryFeedback}</span>
+              </div>
+            )}
+
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* Row 1 */}
               <div className="grid grid-cols-2 gap-4">
@@ -164,13 +218,15 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({
                     <select
                       value={profile.network}
                       onChange={(e) =>
-                        setProfile({ ...profile, network: e.target.value })
+                        setProfile({
+                          ...profile,
+                          network: e.target.value as BlockchainNetwork,
+                        })
                       }
                       className="w-full h-11 appearance-none rounded-md border border-[#2E2219] bg-[#16110E] px-4 font-mono text-xs text-[#F3E8E2] focus:outline-none focus:border-[#E0A96D]"
                     >
                       <option value="Ethereum">Ethereum</option>
                       <option value="Polygon">Polygon</option>
-                      <option value="Solana">Solana</option>
                     </select>
                     <ChevronDown className="absolute right-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#8C7C6F] pointer-events-none" />
                   </div>
@@ -215,13 +271,6 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({
                   </label>
                   <Input
                     type="text"
-                    value={profile.secondaryWallet}
-                    onChange={(e) =>
-                      setProfile({
-                        ...profile,
-                        secondaryWallet: e.target.value,
-                      })
-                    }
                     placeholder="ENS ou carteira secundária (opcional)"
                     className="h-11 rounded-md border-[#2E2219] bg-[#16110E] font-mono text-xs text-[#F3E8E2] placeholder:text-[#6E5D50] focus-visible:border-[#E0A96D]"
                   />
@@ -238,7 +287,10 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({
                     <select
                       value={profile.walletType}
                       onChange={(e) => {
-                        setProfile({ ...profile, walletType: e.target.value });
+                        setProfile({
+                          ...profile,
+                          walletType: e.target.value as WalletType,
+                        });
                         setSelectedWallet(e.target.value);
                       }}
                       className="w-full h-11 appearance-none rounded-md border border-[#2E2219] bg-[#16110E] px-4 font-mono text-xs text-[#F3E8E2] focus:outline-none focus:border-[#E0A96D]"
@@ -308,13 +360,7 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({
                 <label className="inline-flex items-center gap-2 cursor-pointer select-none">
                   <input
                     type="checkbox"
-                    checked={profile.useOtherWallet}
-                    onChange={(e) =>
-                      setProfile({
-                        ...profile,
-                        useOtherWallet: e.target.checked,
-                      })
-                    }
+                    onChange={handleToggleUseOtherWallet}
                     className="h-4 w-4 rounded-full border-[#3A2D23] bg-[#16110E] text-[#E0A96D] focus:ring-[#E0A96D]"
                   />
                   <span className="font-mono text-[13px] text-[#F5F1EB] hover:text-[#F3E8E2]">
@@ -407,7 +453,13 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({
                 </div>
                 <div className="flex justify-between items-center text-[#F5F1EB]">
                   <span>Desconto do lançamento</span>
-                  <span>(-) 00.00</span>
+                  <span
+                    className={
+                      discountAmount > 0 ? "text-[#E0A96D]" : "text-[#F5F2EB]"
+                    }
+                  >
+                    (-) {discountAmount.toFixed(2)} ETH
+                  </span>
                 </div>
                 <div className="flex justify-between items-start text-[#F5F1EB]">
                   <span>Taxa de rede</span>
@@ -522,47 +574,51 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({
               </button>
             </div>
 
-            {/* Wallet Account Card 1: Reserva */}
-            <div
-              onClick={() => setSelectedMobileAccount("reserva")}
-              className={cn(
-                "relative flex items-center justify-between rounded-2xl border p-4 transition-all cursor-pointer",
-                selectedMobileAccount === "reserva"
-                  ? "border-[#E0A96D]/60 bg-[#1D1612]"
-                  : "border-[#2D231B] bg-[#16110E]",
-              )}
-            >
-              <div className="flex items-center gap-3">
-                <span
-                  className={cn(
-                    "flex h-4 w-4 shrink-0 items-center justify-center rounded-full border",
-                    selectedMobileAccount === "reserva"
-                      ? "border-[#E0A96D] bg-[#E0A96D]"
-                      : "border-[#5A4739]",
-                  )}
-                >
-                  {selectedMobileAccount === "reserva" && (
-                    <span className="h-1.5 w-1.5 rounded-full bg-[#0D0B0A]" />
-                  )}
-                </span>
-                <div className="space-y-0.5">
-                  <h4 className="font-mono text-xs font-bold text-[#F5F2EB]">
-                    Reserva
-                  </h4>
-                  <p className="font-mono text-[11px] text-[#CFB28C]">
-                    nova.kurio.eth
-                  </p>
-                  <p className="font-mono text-[10px] text-[#CFB28C]">
-                    Rede Polygon
-                  </p>
+            {/* Wallet Account Card 1: Reserva (Exibido Apenas se existir e for diferente da Principal) */}
+            {showSecondaryCard && (
+              <div
+                onClick={() => setSelectedMobileAccount("reserva")}
+                className={cn(
+                  "relative flex items-center justify-between rounded-2xl border p-4 transition-all cursor-pointer",
+                  selectedMobileAccount === "reserva"
+                    ? "border-[#E0A96D]/60 bg-[#1D1612]"
+                    : "border-[#2D231B] bg-[#16110E]",
+                )}
+              >
+                <div className="flex items-center gap-3">
+                  <span
+                    className={cn(
+                      "flex h-4 w-4 shrink-0 items-center justify-center rounded-full border",
+                      selectedMobileAccount === "reserva"
+                        ? "border-[#E0A96D] bg-[#E0A96D]"
+                        : "border-[#5A4739]",
+                    )}
+                  >
+                    {selectedMobileAccount === "reserva" && (
+                      <span className="h-1.5 w-1.5 rounded-full bg-[#0D0B0A]" />
+                    )}
+                  </span>
+                  <div className="space-y-0.5">
+                    <h4 className="font-mono text-xs font-bold text-[#F5F2EB]">
+                      {secondary?.nickname || "Reserva"}
+                    </h4>
+                    <p className="font-mono text-[11px] text-[#CFB28C]">
+                      {secondary?.address
+                        ? `${secondary.address.slice(0, 6)}...${secondary.address.slice(-4)}`
+                        : profile.ensName || "Reserva"}
+                    </p>
+                    <p className="font-mono text-[10px] text-[#CFB28C]">
+                      Rede {secondary?.network || "Polygon"}
+                    </p>
+                  </div>
                 </div>
+                <button type="button" className="p-1 text-[#8C7C6F]">
+                  <MoreVertical className="h-4 w-4" />
+                </button>
               </div>
-              <button type="button" className="p-1 text-[#8C7C6F]">
-                <MoreVertical className="h-4 w-4" />
-              </button>
-            </div>
+            )}
 
-            {/* Wallet Account Card 2: Principal */}
+            {/* Wallet Account Card 2: Principal (Sempre Visível) */}
             <div
               onClick={() => setSelectedMobileAccount("principal")}
               className={cn(
@@ -587,13 +643,15 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({
                 </span>
                 <div className="space-y-0.5">
                   <h4 className="font-mono text-xs font-bold text-[#F5F2EB]">
-                    Principal
+                    {profile.walletNickname || "Principal"}
                   </h4>
                   <p className="font-mono text-[11px] text-[#CFB28C]">
-                    0xA91F...E82C
+                    {profile.walletAddress
+                      ? `${profile.walletAddress.slice(0, 6)}...${profile.walletAddress.slice(-4)}`
+                      : "Sem endereço"}
                   </p>
                   <p className="font-mono text-[10px] text-[#CFB28C]">
-                    Rede principal Ethereum
+                    Rede {profile.network || "Ethereum"}
                   </p>
                 </div>
               </div>

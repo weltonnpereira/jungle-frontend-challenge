@@ -13,18 +13,18 @@ import { Input } from "@/src/components/ui/input";
 import { cn } from "@/src/lib/utils";
 
 export interface HeaderProps {
-  activeNav?: string
-  onNavClick?: (nav: string) => void
-  searchValue: string
-  onSearchChange: (value: string) => void
-  cartCount?: number
-  onOpenCart?: () => void
-  onOpenFiltersSheet?: () => void
-  onLoginClick?: () => void
-  currentUser?: { name: string; email: string } | null
-  onProfileClick?: () => void
-  onLogout?: () => void
-  activeFiltersCount?: number
+  activeNav?: string;
+  onNavClick?: (nav: string) => void;
+  searchValue: string;
+  onSearchChange: (value: string) => void;
+  cartCount?: number;
+  onOpenCart?: () => void;
+  onOpenFiltersSheet?: () => void;
+  onLoginClick?: () => void;
+  currentUser?: { name: string; email: string } | null;
+  onProfileClick?: () => void;
+  onLogout?: () => void;
+  activeFiltersCount?: number;
 }
 
 const NAV_LINKS = [
@@ -219,6 +219,17 @@ export const Header: React.FC<HeaderProps> = ({
               </span>
             )}
           </button>
+          {currentUser && (
+            <button
+              type="button"
+              onClick={onLogout}
+              title="Sair"
+              className="p-2 text-[#8C7C6F] hover:text-red-400 hover:bg-[#1A1410] rounded-lg transition-colors"
+              aria-label="Sair da conta"
+            >
+              <LogOut className="h-4 w-4" />
+            </button>
+          )}
         </div>
       </div>
     </header>

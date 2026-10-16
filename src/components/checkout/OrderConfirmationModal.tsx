@@ -36,17 +36,7 @@ export const OrderConfirmationModal: React.FC<OrderConfirmationModalProps> = ({
   }
 
   // Fallback default data matching Confirmação de Pedido desktop 4.jpg
-  const data = orderData || {
-    transactionId: "0xA91F...E82C",
-    date: "29 Jul, 2026",
-    total: 26.846,
-    subtotal: 26.83,
-    discount: 0,
-    networkFee: 0.016,
-    wallet: "MetaMask",
-    network: "Ethereum",
-    items: [],
-  };
+  const data = orderData;
 
   // Envelope with THANK YOU seal SVG
   const ThankYouEnvelopeIcon = () => (
@@ -112,25 +102,25 @@ export const OrderConfirmationModal: React.FC<OrderConfirmationModalProps> = ({
             ID da transação
           </span>
           <span className="text-[#CFB28C] font-semibold truncate block mt-0.5">
-            {data.transactionId}
+            {data?.transactionId}
           </span>
         </div>
         <div>
           <span className="block text-[11px] text-[#CFB28C]">Data</span>
           <span className="text-[#CFB28C] font-semibold block mt-0.5">
-            {data.date}
+            {data?.date}
           </span>
         </div>
         <div>
           <span className="block text-[11px] text-[#CFB28C]">Total</span>
           <span className="text-[#CFB28C] font-bold block mt-0.5">
-            {data.total.toFixed(3)} ETH
+            {data?.total.toFixed(3)} ETH
           </span>
         </div>
         <div>
           <span className="block text-[11px] text-[#CFB28C]">Carteira</span>
           <span className="text-[#CFB28C] font-semibold block mt-0.5">
-            {data.wallet}
+            {data?.wallet}
           </span>
         </div>
       </div>
@@ -150,8 +140,8 @@ export const OrderConfirmationModal: React.FC<OrderConfirmationModalProps> = ({
 
         {/* Item Rows */}
         <div className="space-y-2.5 max-h-48 overflow-y-auto pr-1">
-          {data.items.length > 0 ? (
-            data.items.map((item) => (
+          {data && data.items.length > 0 ? (
+            data?.items.map((item) => (
               <div
                 key={item.id}
                 className="flex items-center justify-between text-xs font-mono py-1"
@@ -195,13 +185,13 @@ export const OrderConfirmationModal: React.FC<OrderConfirmationModalProps> = ({
           <div className="flex justify-between text-[#8C7C6F]">
             <span>Taxa de rede</span>
             <span className="text-[#F3E8E2]">
-              {data.networkFee.toFixed(3)} ETH
+              {data?.networkFee.toFixed(3)} ETH
             </span>
           </div>
           <div className="flex justify-between font-bold pt-1">
             <span className="text-[#F5F2EB]">Total</span>
             <span className="text-base text-[#E0A96D]">
-              {data.total.toFixed(3)} ETH
+              {data?.total.toFixed(3)} ETH
             </span>
           </div>
         </div>
@@ -217,9 +207,9 @@ export const OrderConfirmationModal: React.FC<OrderConfirmationModalProps> = ({
       <div className="pt-2 flex justify-center">
         <Button
           onClick={() => {
-            onViewEtherscan?.(data.transactionId);
+            onViewEtherscan?.(data?.transactionId || "");
             window.open(
-              `https://etherscan.io/tx/${data.transactionId}`,
+              `https://etherscan.io/tx/${data?.transactionId}`,
               "_blank",
               "noopener,noreferrer",
             );

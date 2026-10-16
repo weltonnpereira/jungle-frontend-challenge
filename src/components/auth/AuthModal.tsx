@@ -26,7 +26,7 @@ export interface AuthModalProps {
   onOpenChange: (open: boolean) => void;
   authMode: AuthMode;
   setAuthMode: (mode: AuthMode) => void;
-  onSuccess?: (userData: { name: string; email: string }) => void;
+  onSuccess?: (userData: { name: string; email: string; password: string }) => void;
   onForgotPassword?: () => void;
   onSocialLogin?: (provider: "google" | "facebook") => void;
 }
@@ -80,6 +80,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         onSuccess?.({
           name: email.split("@")[0],
           email,
+          password
         });
         onOpenChange(false);
       }, 600);
@@ -98,6 +99,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         onSuccess?.({
           name: username,
           email,
+          password
         });
         onOpenChange(false);
       }, 600);
