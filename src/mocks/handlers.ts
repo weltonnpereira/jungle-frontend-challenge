@@ -70,7 +70,7 @@ const createUserProfile = (
   email: email,
   ensName: name.toLowerCase().replace(/\s+/g, ""),
   notes: "",
-  avatar: "/assets/hero-nft.png",
+  avatar: "/assets/hero-nft.webp",
   walletAddress:
     "0x" + Math.random().toString(16).substring(2, 22).toUpperCase(),
   isSecondaryEqualMain: false,
@@ -144,7 +144,7 @@ export const handlers = [
       id: foundUser.id,
       name: foundUser.name,
       email: foundUser.email,
-      avatar: foundUser.avatar || "/assets/hero-nft.png",
+      avatar: foundUser.avatar || "/assets/hero-nft.webp",
     };
 
     const token = "jwt-mock-token-" + Date.now();
@@ -193,7 +193,7 @@ export const handlers = [
       name: body.name,
       email: body.email,
       password: body.password,
-      avatar: "/assets/sage-nomad.png",
+      avatar: "/assets/sage-nomad.webp",
     };
 
     users.push(newUser);
@@ -238,7 +238,7 @@ export const handlers = [
         id: "usr-social-" + Date.now(),
         name: name,
         email: email,
-        avatar: "/assets/hero-nft.png",
+        avatar: "/assets/hero-nft.webp",
         provider: body.provider,
       };
       users.push(user);

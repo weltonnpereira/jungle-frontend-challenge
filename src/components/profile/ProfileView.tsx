@@ -37,6 +37,8 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
   const [walletNickname, setWalletNickname] = React.useState("");
   const [avatarUrl, setAvatarUrl] = React.useState("/assets/hero-nft.webp");
 
+  console.log("Avatar URL atual:", avatarUrl);
+
   // Password fields
   const [currentPassword, setCurrentPassword] = React.useState("");
   const [newPassword, setNewPassword] = React.useState("");
@@ -309,7 +311,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
                       </Button>
                       <button
                         type="button"
-                        onClick={() => setAvatarUrl("/assets/hero-nft.png")}
+                        onClick={() => setAvatarUrl("/assets/hero-nft.webp")}
                         className="font-mono text-xs text-[#8C7C6F] hover:text-[#F5F2EB] transition-colors"
                       >
                         Remover
