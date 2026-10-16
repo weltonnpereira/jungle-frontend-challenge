@@ -35,7 +35,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
   const [email, setEmail] = React.useState("");
   const [ensName, setEnsName] = React.useState("");
   const [walletNickname, setWalletNickname] = React.useState("");
-  const [avatarUrl, setAvatarUrl] = React.useState("/assets/hero-nft.png");
+  const [avatarUrl, setAvatarUrl] = React.useState("/assets/hero-nft.webp");
 
   // Password fields
   const [currentPassword, setCurrentPassword] = React.useState("");
