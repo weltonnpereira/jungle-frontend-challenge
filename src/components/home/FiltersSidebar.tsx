@@ -180,7 +180,7 @@ export const FiltersSidebar: React.FC<FiltersSidebarProps> = ({
           <div className="group relative overflow-hidden rounded-2xl border border-[#342921] bg-[#16120F] shadow-lg transition-all hover:border-[#E0A96D]/50">
             <div className="aspect-[4/5] w-full overflow-hidden">
               <img
-                src="/assets/sage-nomad.png"
+                src="/assets/sage-nomad.webp"
                 alt="NFT em Destaque"
                 className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
               />

@@ -18,7 +18,7 @@ export const PromoBanners: React.FC<PromoBannersProps> = ({
         <div className="flex flex-col sm:flex-row overflow-hidden rounded-2xl border border-[#2E241D] bg-[#16120F] transition-all hover:border-[#E0A96D]/40">
           <div className="sm:w-2/5 aspect-square shrink-0 overflow-hidden bg-[#201814]">
             <img
-              src="/assets/hero-nft.png"
+              src="/assets/hero-nft.webp"
               alt="Lançamentos gênesis"
               className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
             />
@@ -49,7 +49,7 @@ export const PromoBanners: React.FC<PromoBannersProps> = ({
         <div className="flex flex-col sm:flex-row overflow-hidden rounded-2xl border border-[#2E241D] bg-[#16120F] transition-all hover:border-[#E0A96D]/40">
           <div className="sm:w-2/5 aspect-square shrink-0 overflow-hidden bg-[#201814]">
             <img
-              src="/assets/ivory-baron.png"
+              src="/assets/ivory-baron.webp"
               alt="Arte digital selecionada"
               className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
             />

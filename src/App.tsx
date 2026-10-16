@@ -323,7 +323,7 @@ export default function App() {
         {currentView === "home" && (
           <Home
             searchQuery={searchQuery}
-            heroImage="/assets/hero-nft.png"
+            heroImage="/assets/hero-nft.webp"
             isMobileFilterOpen={isMobileFilterOpen}
             setIsMobileFilterOpen={setIsMobileFilterOpen}
             onSelectNFT={handleSelectNFT}

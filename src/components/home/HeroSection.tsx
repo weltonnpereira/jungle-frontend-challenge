@@ -9,7 +9,7 @@ export interface HeroSectionProps {
 
 export const HeroSection: React.FC<HeroSectionProps> = ({
   onExploreClick,
-  heroImage = '/assets/hero-nft.png',
+  heroImage = '/assets/hero-nft.webp',
 }) => {
   const [activeDot, setActiveDot] = React.useState(0)
 
