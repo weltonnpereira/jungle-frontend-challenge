@@ -100,10 +100,10 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
   const handleAvatarChange = () => {
     // Cycle between avatars for demonstration
     const avatars = [
-      "/assets/hero-nft.png",
-      "/assets/sage-nomad.png",
-      "/assets/ivory-baron.png",
-      "/assets/golden-beat.png",
+      "/assets/hero-nft.webp",
+      "/assets/sage-nomad.webp",
+      "/assets/ivory-baron.webp",
+      "/assets/golden-beat.webp",
     ];
     const nextIdx = (avatars.indexOf(avatarUrl) + 1) % avatars.length;
     setAvatarUrl(avatars[nextIdx]);
